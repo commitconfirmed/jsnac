@@ -1,0 +1,236 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "chassis": {
+            "type": "object",
+            "properties": {
+                "hostname": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "system": {
+            "type": "object",
+            "properties": {
+                "domain_name": {
+                    "type": "string"
+                },
+                "ntp_servers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "syslog_servers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "interfaces": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "if": {
+                        "type": "string"
+                    },
+                    "desc": {
+                        "type": "string"
+                    },
+                    "ipv4": {
+                        "type": "string"
+                    },
+                    "ipv6": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "protocols": {
+            "type": "object",
+            "properties": {
+                "static": {
+                    "type": "object",
+                    "properties": {
+                        "ipv4": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "prefix": {
+                                        "type": "string"
+                                    },
+                                    "dest": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "ipv6": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "prefix": {
+                                        "type": "string"
+                                    },
+                                    "dest": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "bgp": {
+                    "type": "object",
+                    "properties": {
+                        "router_id": {
+                            "type": "string"
+                        },
+                        "local_as": {
+                            "type": "integer"
+                        },
+                        "type": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "underlay_name": {
+                            "type": "string"
+                        },
+                        "sessions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "local_as": {
+                                        "type": "integer"
+                                    },
+                                    "remote_as": {
+                                        "type": "integer"
+                                    },
+                                    "neighbors": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "ip": {
+                                                    "type": "string"
+                                                },
+                                                "pg": {
+                                                    "type": "string"
+                                                },
+                                                "desc": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "prefixes_v4_out": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "prefix": {
+                                                    "type": "string"
+                                                },
+                                                "action": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "prefixes_v6_out": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "prefix": {
+                                                    "type": "string"
+                                                },
+                                                "action": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "routemaps_v4_in": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "action": {
+                                                    "type": "string"
+                                                },
+                                                "pfl": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "routemaps_v4_out": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "action": {
+                                                    "type": "string"
+                                                },
+                                                "pfl": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "routemaps_v6_in": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "action": {
+                                                    "type": "string"
+                                                },
+                                                "pfl": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "routemaps_v6_out": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "action": {
+                                                    "type": "string"
+                                                },
+                                                "pfl": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
