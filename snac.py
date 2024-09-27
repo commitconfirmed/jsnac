@@ -1,6 +1,7 @@
-import json
 import os
 import logging
+import json
+import yaml
 
 # Set up logging to the terminal, with colors
 def my_logger():
@@ -33,6 +34,17 @@ def infer_schema(data):
                     schema['$ref'] = "#/$defs/domain"
                 case 'string':
                     schema['$ref'] = "#/$defs/string"
+                case 'pattern':
+                    if 'jsnac_pattern' not in data:
+                        log.error(f"jsnac_pattern key is required for jsnac_type: pattern.")
+                        schema['type'] = "null"
+                        schema['title'] = "Error"
+                        schema['description'] = "No jsnac_pattern key provided"
+                    else:
+                        schema['type'] = "string"
+                        schema['pattern'] = data['jsnac_pattern']
+                        schema['title'] = "Custom Pattern"
+                        schema['description'] = "Custom Pattern (regex) \n Pattern: " + data['jsnac_pattern']
                 case 'choice':
                     if 'jsnac_choices' not in data:
                         log.error(f"jsnac_choices key is required for jsnac_type: choice.")
@@ -44,10 +56,10 @@ def infer_schema(data):
                         schema['title'] = "Custom Choice"
                         schema['description'] = "Custom Choice (enum) \n Choices: " + ", ".join(data['jsnac_choices'])
                 case _:
-                    log.error(f"Invalid jsnac_type: {data['jsnac_type']}, defaulting to null")
+                    log.error(f"Invalid jsnac_type: ({data['jsnac_type']}), defaulting to null")
                     schema['type'] = "null"
                     schema['title'] = "Error"
-                    schema['description'] = "Invalid jsnac_type defined"
+                    schema['description'] = "Invalid jsnac_type (" + data['jsnac_type'] + ") defined"
         # If not, simply continue inferring the schema
         else:
             schema['type'] = "object"
@@ -71,9 +83,8 @@ def infer_schema(data):
         schema['type'] = "null" 
     return schema
 
-def json_to_schema(json_file_path, schema_file_path):
-    with open(json_file_path, 'r') as json_file:
-        data = json.load(json_file)
+def json_to_schema(data, schema_file_path):
+    #data = json.loads(json_data)
     log.debug(f"Inferring schema for: \n {json.dumps(data, indent=4)}")
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -142,6 +153,16 @@ def json_to_schema(json_file_path, schema_file_path):
 
 if __name__ == "__main__":
     log = my_logger()
-    json_file_path = "test.json"
-    schema_file_path = "test-schema.json"
-    json_to_schema(json_file_path, schema_file_path)
+    yaml_file_path = "test.yml"
+
+    # Load and convert the YAML file to JSON data
+    with open(yaml_file_path, 'r') as yf:
+        yaml_content = yaml.safe_load(yf)
+    log.debug(f"YAML content: \n {yaml_content}")
+    json_dump = json.dumps(yaml_content, indent=4)
+    json_data = json.loads(json_dump)
+    log.debug(f"JSON content: \n {json_dump}")
+
+    # Convert the JSON data to a JSON Schema
+    schema_file_path = "jsnac-schema.json"
+    json_to_schema(json_data, schema_file_path)

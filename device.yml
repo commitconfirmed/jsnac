@@ -1,6 +1,0 @@
-interfaces:
-  - if: "Loopback0"
-    desc: "Test Loopback"
-    ipv4: 
-      jsnac_type: ipv4_cidr
-    ipv6: {jsnac_type: ipv6_cidr}

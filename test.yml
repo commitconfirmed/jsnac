@@ -1,0 +1,14 @@
+chassis:
+  hostname: { jsnac_type: pattern, jsnac_pattern: "^ceos-[a-zA-Z]{1,16}[0-9]$" }
+  model: "ceos"
+  type: { jsnac_type: choice, jsnac_choices: ["router", "switch", "spine", "leaf"] }
+
+system:
+  domain_name: { jsnac_type: domain }
+  ntp_servers: { jsnac_type: ipv4 }
+  
+interfaces:
+  - if: { jsnac_type: string }
+    desc: { jsnac_type: string }
+    ipv4: { jsnac_type: ipv4_cidr }
+    ipv6: { jsnac_type: ipv6_cidr }
