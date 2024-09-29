@@ -37,7 +37,7 @@ interfaces:
         ipv4: "10.1.0.20/24"
 ```
 
-You can simply write out how you would like to validate this data, and this program will write out a JSON schema you can use. You can just also keep your existing data if you just want basic type validation (string, integer, float, array, etc.)
+You can simply write out how you would like to validate this data, and this program will write out a JSON schema you can use. You can just also keep your existing data if you just want some basic type validation (string, integer, float, array, etc.).
 
 ```yaml
 chassis:
@@ -86,3 +86,7 @@ interfaces:
 ```
 
 A full list of jsnac_types is available in the documentation
+
+## Usage
+
+You can use jsnac from the command line or by importing it and calling InferSchema?

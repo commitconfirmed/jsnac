@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jsnac"
+version = "0.1.0"
+description = "JSON Schema (for) Network as Code"
+authors = [
+    { name="Andrew Jones", email="ajones@commitconfirmed.com" }
+]
+license = { text = "MIT" }
+dependencies = [
+    "pyyaml>=6.0.2"
+]
+
+[project.scripts]
+jsnac = "jsnac.utils.jnsac_cli:main"
+
+[tool.setuptools]
+packages = ["jsnac"]
