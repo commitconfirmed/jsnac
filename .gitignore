@@ -1,4 +1,6 @@
 **/__pycache__/
-jsnac-schema.json
+**/*.pyc
+**/*.egg-info/
+jsnac.schema.json
 test.json
 test.yml

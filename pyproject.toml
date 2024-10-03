@@ -1,21 +1,21 @@
-[build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "jsnac"
 version = "0.1.0"
 description = "JSON Schema (for) Network as Code"
-authors = [
-    { name="Andrew Jones", email="ajones@commitconfirmed.com" }
-]
-license = { text = "MIT" }
-dependencies = [
-    "pyyaml>=6.0.2"
-]
+authors = ["Andrew Jones <jsnac@commitconfirmed.com>"]
+license = "MIT"
 
-[project.scripts]
-jsnac = "jsnac.utils.jnsac_cli:main"
+[tool.poetry.dependencies]
+python = "^3.7"
+pyyaml = "^6.0.*"
 
-[tool.setuptools]
-packages = ["jsnac"]
+[tool.poetry.scripts]
+jsnac = "jsnac.utils.jsnac_cli:main"
+
+[tool.poetry.dev-dependencies]
+coverage = "^7.6.*"
+pytest = "^8.3.*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

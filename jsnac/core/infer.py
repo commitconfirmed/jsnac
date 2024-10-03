@@ -40,6 +40,7 @@ class SchemaInferer:
             data = self.data
 
         self.log.debug(f"Building schema for: \n {json.dumps(data, indent=4)}")
+        # Using older draft until vscode $dynamicRef support is added (https://github.com/microsoft/vscode/issues/155379)
         schema = {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
             "title": "JSNAC Created Schema",
