@@ -1,6 +1,6 @@
 **/__pycache__/
 **/*.pyc
 **/*.egg-info/
+.coverage
+**/htmlcov/
 jsnac.schema.json
-test.json
-test.yml

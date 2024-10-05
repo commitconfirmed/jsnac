@@ -40,35 +40,35 @@ class SchemaInferer:
             data = self.data
 
         self.log.debug(f"Building schema for: \n {json.dumps(data, indent=4)}")
-        # Using older draft until vscode $dynamicRef support is added (https://github.com/microsoft/vscode/issues/155379)
+        # Currently using draft-07 until vscode $dynamicRef support is added (https://github.com/microsoft/vscode/issues/155379)
+        # Feel free to replace this with https://json-schema.org/draft/2020-12/schema if not using vscode
         schema = {
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$schema": "https://json-schema.org/draft-07/schema",
             "title": "JSNAC Created Schema",
             "description": "The below schema was created by JSNAC (https://github.com/commitconfirmed/jsnac)",
             "$defs": {
                 "ipv4": {
                     "type": "string",
-                    "pattern": "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])$",
+                    "pattern": "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])$",
                     "title": "IPv4 Address",
                     "description": "IPv4 address (String) \n Format: xxx.xxx.xxx.xxx"
                 },
                 # IPv6 regex pattern from https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
                 "ipv6": {
                     "type": "string",
-                    "pattern": "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))",
+                    "pattern": "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))",
                     "title": "IPv6 Address",
                     "description": "Short IPv6 address (String) \n Accepts both full and short form addresses, link-local addresses, and IPv4-mapped addresses"
                 },
                 "ipv4_cidr": {
                     "type": "string",
-                    "pattern": "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])/(1[0-9]|[0-9]|2[0-9]|3[0-2])$",
+                    "pattern": "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])/(1[0-9]|[0-9]|2[0-9]|3[0-2])$",
                     "title": "IPv4 CIDR",
                     "description": "IPv4 CIDR (String) \n Format: xxx.xxx.xxx.xxx/xx"
                 },
-                # I'll fix this to inlcude more types later
                 "ipv6_cidr": {
                     "type": "string",
-                    "pattern": "^([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}/[0-9]{1,3}$",
+                    "pattern": "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/([6-9][0-9]|1[0-2][0-8])$",
                     "title": "IPv6 CIDR",
                     "description": "Full IPv6 CIDR (String) \n Format: xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/xxx"
                 },
@@ -86,14 +86,14 @@ class SchemaInferer:
                 },
                 "domain": {
                     "type": "string",
-                    "pattern": "^([a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,63}$",
+                    "pattern": "^([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,63}$",
                     "title": "Domain Name",
                     "description": "Domain name (String) \n Format: example.com"
                 },
                 # String is a default type, but in this instance we restict it to alphanumeric + special characters with a max length of 255
                 "string": {
                     "type": "string",
-                    "pattern": "^[a-zA-Z0-9!@#$%^&*()_+-\\{\\}|:;\"'<>,.?/]{1,255}$",
+                    "pattern": "^[a-zA-Z0-9!@#$%^&*()_+-\\{\\}|:;\"'<>,.?/ ]{1,255}$",
                     "title": "String",
                     "description": "Alphanumeric string with special characters (String) \n Max length: 255"
                 },

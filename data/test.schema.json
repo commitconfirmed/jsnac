@@ -1,0 +1,114 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "JSNAC Created Schema",
+    "description": "The below schema was created by JSNAC (https://github.com/commitconfirmed/jsnac)",
+    "$defs": {
+        "ipv4": {
+            "type": "string",
+            "pattern": "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])$",
+            "title": "IPv4 Address",
+            "description": "IPv4 address (String) \n Format: xxx.xxx.xxx.xxx"
+        },
+        "ipv6": {
+            "type": "string",
+            "pattern": "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))",
+            "title": "IPv6 Address",
+            "description": "Short IPv6 address (String) \n Accepts both full and short form addresses, link-local addresses, and IPv4-mapped addresses"
+        },
+        "ipv4_cidr": {
+            "type": "string",
+            "pattern": "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])/(1[0-9]|[0-9]|2[0-9]|3[0-2])$",
+            "title": "IPv4 CIDR",
+            "description": "IPv4 CIDR (String) \n Format: xxx.xxx.xxx.xxx/xx"
+        },
+        "ipv6_cidr": {
+            "type": "string",
+            "pattern": "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/([6-9][0-9]|1[0-2][0-8])$",
+            "title": "IPv6 CIDR",
+            "description": "Full IPv6 CIDR (String) \n Format: xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/xxx"
+        },
+        "ipv4_prefix": {
+            "type": "string",
+            "title": "IPv4 Prefix",
+            "pattern": "^/(1[0-9]|[0-9]|2[0-9]|3[0-2])$",
+            "description": "IPv4 Prefix (String) \n Format: /xx between 0 and 32"
+        },
+        "ipv6_prefix": {
+            "type": "string",
+            "title": "IPv4 Prefix",
+            "pattern": "^/([6-9][0-9]|1[0-2][0-8])$",
+            "description": "IPv6 prefix (String) \n Format: /xx between 64 and 128"
+        },
+        "domain": {
+            "type": "string",
+            "pattern": "^([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,63}$",
+            "title": "Domain Name",
+            "description": "Domain name (String) \n Format: example.com"
+        },
+        "string": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9!@#$%^&*()_+-\\{\\}|:;\"'<>,.?/ ]{1,255}$",
+            "title": "String",
+            "description": "Alphanumeric string with special characters (String) \n Max length: 255"
+        }
+    },
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "chassis": {
+            "type": "object",
+            "properties": {
+                "hostname": {
+                    "type": "string",
+                    "pattern": "^ceos-[a-zA-Z]{1,16}[0-9]$",
+                    "title": "Custom Pattern",
+                    "description": "Custom Pattern (regex) \n Pattern: ^ceos-[a-zA-Z]{1,16}[0-9]$"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        "router",
+                        "switch",
+                        "spine",
+                        "leaf"
+                    ],
+                    "title": "Custom Choice",
+                    "description": "Custom Choice (enum) \n Choices: router, switch, spine, leaf"
+                }
+            }
+        },
+        "system": {
+            "type": "object",
+            "properties": {
+                "domain_name": {
+                    "$ref": "#/$defs/domain"
+                },
+                "ntp_servers": {
+                    "$ref": "#/$defs/ipv4"
+                }
+            }
+        },
+        "interfaces": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "if": {
+                        "$ref": "#/$defs/string"
+                    },
+                    "desc": {
+                        "$ref": "#/$defs/string"
+                    },
+                    "ipv4": {
+                        "$ref": "#/$defs/ipv4_cidr"
+                    },
+                    "ipv6": {
+                        "$ref": "#/$defs/ipv6_cidr"
+                    }
+                }
+            }
+        }
+    }
+}

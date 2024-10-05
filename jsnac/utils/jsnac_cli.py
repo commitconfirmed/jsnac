@@ -1,27 +1,26 @@
-import argparse
+import sys
 import time
-import os
 import logging
+from argparse import ArgumentParser
 from jsnac import SchemaInferer, __version__
 
 # Import JSNAC in system path if run locally
 if __name__ == "__main__":
-    import sys
     sys.path.insert(0, ".")
 
 # Setup logging
 def setup_logging():
     log = logging.getLogger("jsnac")
     log.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('[%(levelname)s] - %(name)s - %(message)s')
     ch = logging.StreamHandler()
     ch.setFormatter(formatter)
     log.addHandler(ch)
     return log
 
 # Take in arguments from the CLI and run JSNAC
-def parse_args(args=None) -> argparse.ArgumentParser.parse_args:
-    parser = argparse.ArgumentParser(description="JSNAC CLI")
+def parse_args(args=None) -> ArgumentParser.parse_args:
+    parser = ArgumentParser(description="JSNAC CLI")
     parser.add_argument(
         '--version',
         action='version',
@@ -29,13 +28,14 @@ def parse_args(args=None) -> argparse.ArgumentParser.parse_args:
         help='Show the version of the application'
     )
     parser.add_argument(
-        '-c', '--config',
+        '-f', '--file',
         type=str,
         required=True,
         help='Path to the YAML file to convert to JSON and build a schema'
     )
     parser.add_argument(
         '-j', '--json',
+        action='store_true',
         help='Skip converting YAML to JSON and use JSON directly'
     )
     parser.add_argument(
@@ -45,32 +45,34 @@ def parse_args(args=None) -> argparse.ArgumentParser.parse_args:
         help='Path to the output file (default: jsnac.schema.json)'
     )
     parser.add_argument(
-        '-g', '--guess',
-        help='Attempt to guess the schema on an unmodified YAML/JSON file'
+        '-i', '--infer',
+        action='store_true',
+        help='Attempt to infer the schema on an unmodified YAML/JSON file [In Development]'
     )
     parser.add_argument(
         '-v', '--verbose',
+        action='store_true',
         help='Increase log verbosity'
     )
     return parser.parse_args(args)
 
 def main(args=None) -> None:
-    args = cli(args)
+    args = parse_args(args)
     log = setup_logging()
     if args.verbose:
         log.setLevel(logging.DEBUG)
     else:
         log.setLevel(logging.INFO)
     log.info("Starting JSNAC CLI")
-    # Config is required but checking anyway
-    if args.config:
+    # File is required but checking anyway
+    if args.file:
         jsnac = SchemaInferer()
         if args.json:
-            log.debug(f"Using JSON file: {args.config}")
-            jsnac.add_json(open(args.config).read())
+            log.debug(f"Using JSON file: {args.file}")
+            jsnac.add_json(open(args.file).read())
         else:
-            log.debug(f"Using YAML file: {args.config}")
-            jsnac.add_yaml(open(args.config).read())
+            log.debug(f"Using YAML file: {args.file}")
+            jsnac.add_yaml(open(args.file).read())
         # Build the schema and record the time taken
         tic = time.perf_counter()
         schema = jsnac.build()
@@ -82,7 +84,7 @@ def main(args=None) -> None:
             f.write(schema)
         log.info(f"Schema written to: {schema_file}")
     log.info("JSNAC CLI complete")
-        
+    sys.exit(0)      
 
 if __name__ == "__main__":
     main()

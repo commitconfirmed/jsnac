@@ -1,19 +1,17 @@
-from jsnac.utils.jsnac_cli import cli
 from jsnac.utils.jsnac_cli import main
 import pytest
 
 # Test CLI with no arguments
 def test_cli(capsys) -> None:
-    # Test CLI with no arguments
     with pytest.raises(SystemExit):
-        cli()
+        main()
     output = capsys.readouterr()
     assert "error: the following arguments are required" in output.err
 
 # Test CLI with help argument
 def test_cli_help(capsys) -> None:
     with pytest.raises(SystemExit):
-        cli(["-h"])
+        main(["-h"])
     output = capsys.readouterr()
     assert "JSNAC CLI\n\noptions:" in output.out
 
@@ -24,9 +22,23 @@ def test_cli_version(capsys) -> None:
     output = capsys.readouterr()
     assert "JSNAC version" in output.out
 
-# Test CLI with config argument
-def test_cli_config(capsys) -> None:
+# Test CLI with file argument and included YAML file using JSNAC definitions
+def test_cli_file_yaml_jsnac(capsys) -> None:
     with pytest.raises(SystemExit):
-        main(["-c", "test.yml"])
+        main(["-f", "data/test-jsnac.yml"])
     output = capsys.readouterr()
-    assert "Schema written to: jsnac.schema.json" in output.out
+    assert "JSNAC CLI complete" in output.err
+
+# Test CLI with file argument and regular YAML file
+def test_cli_file_yaml(capsys) -> None:
+    with pytest.raises(SystemExit):
+        main(["-f", "data/test.yml"])
+    output = capsys.readouterr()
+    assert "JSNAC CLI complete" in output.err
+
+# Test CLI with file argument and included JSON file using JSNAC definitions
+def test_cli_file_json(capsys) -> None:
+    with pytest.raises(SystemExit):
+        main(["-f", "data/test-jsnac.json", "-j"])
+    output = capsys.readouterr()
+    assert "JSNAC CLI complete" in output.err
