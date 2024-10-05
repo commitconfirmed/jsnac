@@ -25,20 +25,20 @@ def test_cli_version(capsys) -> None:
 # Test CLI with file argument and included YAML file using JSNAC definitions
 def test_cli_file_yaml_jsnac(capsys) -> None:
     with pytest.raises(SystemExit):
-        main(["-f", "data/test-jsnac.yml"])
+        main(["-f", "data/example-jsnac.yml"])
     output = capsys.readouterr()
     assert "JSNAC CLI complete" in output.err
 
 # Test CLI with file argument and regular YAML file
 def test_cli_file_yaml(capsys) -> None:
     with pytest.raises(SystemExit):
-        main(["-f", "data/test.yml"])
+        main(["-f", "data/example.yml"])
     output = capsys.readouterr()
     assert "JSNAC CLI complete" in output.err
 
 # Test CLI with file argument and included JSON file using JSNAC definitions
 def test_cli_file_json(capsys) -> None:
     with pytest.raises(SystemExit):
-        main(["-f", "data/test-jsnac.json", "-j"])
+        main(["-f", "data/example-jsnac.json", "-j"])
     output = capsys.readouterr()
     assert "JSNAC CLI complete" in output.err

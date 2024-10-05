@@ -1,5 +1,4 @@
 from jsnac.core.infer import SchemaInferer
-import pytest
 
 # Test SchemaInferer with jsnac_type: ipv4
 def test_infer_ipv4() -> None:
