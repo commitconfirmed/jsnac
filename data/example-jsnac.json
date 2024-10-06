@@ -19,9 +19,11 @@
         "domain_name": {
             "jsnac_type": "domain"
         },
-        "ntp_servers": {
-            "jsnac_type": "ipv4"
-        }
+        "ntp_servers": [
+            {
+                "jsnac_type": "ipv4"
+            }
+        ]
     },
     "interfaces": [
         {

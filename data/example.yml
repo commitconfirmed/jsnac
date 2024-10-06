@@ -5,6 +5,7 @@ chassis:
 
 system:
     domain_name: "example.com"
+    ntp_servers: [ "10.0.0.1", "10.0.0.2" ]
     
 interfaces:
     - if: "Loopback0"

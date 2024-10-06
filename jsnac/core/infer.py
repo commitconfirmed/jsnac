@@ -54,10 +54,11 @@ class SchemaInferer:
                     "title": "IPv4 Address",
                     "description": "IPv4 address (String) \n Format: xxx.xxx.xxx.xxx"
                 },
-                # IPv6 regex pattern from https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
+                # Decided to just go simple for now, may add more complex validation in the future from
+                # https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
                 "ipv6": {
                     "type": "string",
-                    "pattern": "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))",
+                    "pattern": "^(([a-fA-F0-9]{1,4}|):){1,7}([a-fA-F0-9]{1,4}|:)$",
                     "title": "IPv6 Address",
                     "description": "Short IPv6 address (String) \n Accepts both full and short form addresses, link-local addresses, and IPv4-mapped addresses"
                 },
@@ -69,7 +70,7 @@ class SchemaInferer:
                 },
                 "ipv6_cidr": {
                     "type": "string",
-                    "pattern": "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/([6-9][0-9]|1[0-2][0-8])$",
+                    "pattern": "(([a-fA-F0-9]{1,4}|):){1,7}([a-fA-F0-9]{1,4}|:)/(32|36|40|44|48|52|56|60|64|128)$",
                     "title": "IPv6 CIDR",
                     "description": "Full IPv6 CIDR (String) \n Format: xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/xxx"
                 },
@@ -81,9 +82,9 @@ class SchemaInferer:
                 },
                 "ipv6_prefix": {
                     "type": "string",
-                    "title": "IPv4 Prefix",
-                    "pattern": "^/([6-9][0-9]|1[0-2][0-8])$",
-                    "description": "IPv6 prefix (String) \n Format: /xx between 64 and 128"
+                    "title": "IPv6 Prefix",
+                    "pattern": "^/(32|36|40|44|48|52|56|60|64|128)$",
+                    "description": "IPv6 prefix (String) \n Format: /xx between 32 and 64 in increments of 4. also /128"
                 },
                 "domain": {
                     "type": "string",
@@ -108,8 +109,8 @@ class SchemaInferer:
     # Infer the properties of the data passed in, this function will call itself recursively to infer nested properties
     def infer_properties(self, data):
         schema = {}
+        # Check if the dictionary has a jsnac_type key in it, then we know we can use our custom schema definitions
         if isinstance(data, dict):
-            # Check if the dictionary has a jsnac_type key in it, then we know we can use our custom schema definitions
             if 'jsnac_type' in data:
                 match data['jsnac_type']:
                     case 'ipv4':
@@ -122,6 +123,8 @@ class SchemaInferer:
                         schema['$ref'] = "#/$defs/ipv6_cidr"
                     case 'ipv4_prefix':
                         schema['$ref'] = "#/$defs/ipv4_prefix"
+                    case 'ipv6_prefix':
+                        schema['$ref'] = "#/$defs/ipv6_prefix"
                     case 'domain':
                         schema['$ref'] = "#/$defs/domain"
                     case 'string':

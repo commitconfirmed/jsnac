@@ -29,12 +29,12 @@ system:
     
 interfaces:
     - if: "Loopback0"
-        desc: "Underlay Loopback"
-        ipv4: "10.0.0.101/32"
-        ipv6: "2001:2:a1::1/128"
+      desc: "Underlay Loopback"
+      ipv4: "10.0.0.101/32"
+      ipv6: "2001:2:a1::1/128"
     - if: "Ethernet0"
-        desc: "Management Interface"
-        ipv4: "10.1.0.20/24"
+      desc: "Management Interface"
+      ipv4: "10.1.0.20/24"
 ```
 
 You can simply write out how you would like to validate this data, and this program will write out a JSON schema you can use. You can just also keep your existing data if you just want some basic type validation (string, integer, float, array, etc.).

@@ -4,10 +4,6 @@ import logging
 from argparse import ArgumentParser
 from jsnac import SchemaInferer, __version__
 
-# Import JSNAC in system path if run locally
-if __name__ == "__main__":
-    sys.path.insert(0, ".")
-
 # Setup logging
 def setup_logging():
     log = logging.getLogger("jsnac")
@@ -87,4 +83,6 @@ def main(args=None) -> None:
     sys.exit(0)      
 
 if __name__ == "__main__":
+    # Import JSNAC in system path if run locally
+    sys.path.insert(0, ".")
     main()
