@@ -51,6 +51,7 @@ target-version = "py310"
 preview = true
 select = ["ALL"]
 ignore = [
+    "D401",     # First line of docstring should be in imperative mood
     "COM812",   # Conflicts with the formatter
     "ISC001",   # Conflicts with the formatter
     "ANN101",   # "missing-type-self"
@@ -62,15 +63,20 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = [
-    "S101", # Use of `assert` detected
-    "D103", # Missing docstring in public function
+    "ANN001",   # Type annotations
+    "CPY001",   # Copyright
+    "S101",     # Use of `assert` detected
+    "S104",     # Valid tests against 0.0.0.0
+    "D100",     # Missing docstring in public module
+    "D103",     # Missing docstring in public function
+    "D104",     # Missing docstring in public package
 ]
 "**/__init__.py" = [
-    "F401", # Imported but unused
-    "F403", # Wildcard imports
+    "F401",     # Imported but unused
+    "F403",     # Wildcard imports
 ]
 "docs/**" = [
-    "INP001", # Requires __init__.py but docs folder is not a package.
+    "INP001",   # Requires __init__.py but docs folder is not a package.
 ]
 
 [tool.ruff.format]

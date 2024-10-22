@@ -1,5 +1,6 @@
-from jsnac.utils.jsnac_cli import main
 import pytest
+
+from jsnac.utils.jsnac_cli import main
 
 
 # Test CLI with no arguments

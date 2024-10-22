@@ -1,7 +1,9 @@
-from jsnac.core.infer import SchemaInferer
 import json
-import yaml
 import os
+
+import yaml
+
+from jsnac.core.infer import SchemaInferer
 
 # Use this when either example.yml or example-jsnac.yml are updated as a result of
 # feature additions to JSNAC or other ongoing development to recreate

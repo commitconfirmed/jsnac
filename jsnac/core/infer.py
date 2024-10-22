@@ -1,5 +1,6 @@
-import logging
 import json
+import logging
+
 import yaml
 
 
@@ -36,8 +37,7 @@ class SchemaInferer:
         if not hasattr(self, "data"):
             self.log.error("No data has been added to the schema inferer")
             raise Exception("No data has been added to the schema inferer. Use add_json or add_yaml to add data.")
-        else:
-            data = self.data
+        data = self.data
 
         self.log.debug(f"Building schema for: \n {json.dumps(data, indent=4)}")
         # Currently using draft-07 until vscode $dynamicRef support is added (https://github.com/microsoft/vscode/issues/155379)

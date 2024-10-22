@@ -1,12 +1,14 @@
+import logging
 import sys
 import time
-import logging
 from argparse import ArgumentParser
+from pathlib import Path
+
 from jsnac import SchemaInferer, __version__
 
 
 # Setup logging
-def setup_logging():
+def _setup_logging():  # noqa: ANN202
     log = logging.getLogger("jsnac")
     log.setLevel(logging.DEBUG)
     formatter = logging.Formatter("[%(levelname)s] - %(name)s - %(message)s")
@@ -16,8 +18,25 @@ def setup_logging():
     return log
 
 
-# Take in arguments from the CLI and run JSNAC
-def parse_args(args=None) -> ArgumentParser.parse_args:
+def parse_args(args: str | None = None) -> ArgumentParser.parse_args:
+    """Parse command-line arguments for the JSNAC CLI.
+
+    Args:
+        args (str | None): A string of arguments to parse. If None, the arguments
+                           will be taken from sys.argv.
+
+    Returns:
+        argparse.Namespace: An object containing the parsed arguments.
+
+    Arguments:
+        --version: Show the version of the application.
+        -f, --file (str, required): Path to the YAML file to convert to JSON and build a schema.
+        -j, --json: Skip converting YAML to JSON and use JSON directly.
+        -o, --output (str, default="jsnac.schema.json"): Path to the output file.
+        -i, --infer: Attempt to infer the schema on an unmodified YAML/JSON file [In Development].
+        -v, --verbose: Increase log verbosity.
+
+    """
     parser = ArgumentParser(description="JSNAC CLI")
     parser.add_argument(
         "--version",
@@ -55,9 +74,20 @@ def parse_args(args=None) -> ArgumentParser.parse_args:
     return parser.parse_args(args)
 
 
-def main(args=None) -> None:
+def main(args: str | None = None) -> None:
+    """Main function for the JSNAC CLI.
+
+    This function parses command-line arguments, sets up logging, and processes
+    an input file (either JSON or YAML) to infer a schema using the SchemaInferer
+    class. The inferred schema is then written to an output file.
+
+    Args:
+        args (str | None): Command-line arguments as a string. If None, arguments
+                           will be parsed from sys.argv.
+
+    """
     args = parse_args(args)
-    log = setup_logging()
+    log = _setup_logging()
     if args.verbose:
         log.setLevel(logging.DEBUG)
     else:
@@ -65,23 +95,29 @@ def main(args=None) -> None:
     log.info("Starting JSNAC CLI")
     # File is required but checking anyway
     if args.file:
+        input_file = Path(args.file)
         jsnac = SchemaInferer()
         if args.json:
-            log.debug(f"Using JSON file: {args.file}")
-            jsnac.add_json(open(args.file).read())
+            log.debug("Using JSON file: %s", args.file)
+            with input_file.open() as f:
+                jsnac.add_json(f.read())
+                f.close()
         else:
-            log.debug(f"Using YAML file: {args.file}")
-            jsnac.add_yaml(open(args.file).read())
+            log.debug("Using YAML file: %s", args.file)
+            with input_file.open() as f:
+                jsnac.add_yaml(f.read())
+                f.close()
         # Build the schema and record the time taken
         tic = time.perf_counter()
         schema = jsnac.build()
         toc = time.perf_counter()
-        log.info(f"Schema built in {toc - tic:0.4f} seconds")
+        duration = toc - tic
+        log.info("Schema built in %.4f seconds", duration)
         # Write the schema to a file
-        schema_file = args.output
-        with open(schema_file, "w") as f:
+        schema_file = Path(args.output)
+        with schema_file.open(mode="w") as f:
             f.write(schema)
-        log.info(f"Schema written to: {schema_file}")
+        log.info("Schema written to: %s", schema_file)
     log.info("JSNAC CLI complete")
     sys.exit(0)
 

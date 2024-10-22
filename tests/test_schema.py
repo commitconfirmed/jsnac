@@ -1,9 +1,18 @@
 import json
+from pathlib import Path
+
 import jsonschema
 import pytest
 
-test_json_data = json.loads(open("data/example.json").read())
-test_json_schema = json.loads(open("data/example.schema.json").read())
+# Load our example JSON data and schema
+test_json_file = Path("data/example.json")
+test_schema_file = Path("data/example.schema.json")
+with test_json_file.open() as f:
+    test_json_data = json.loads(f.read())
+    f.close()
+with test_schema_file.open() as f:
+    test_json_schema = json.loads(f.read())
+    f.close()
 
 
 # Test the generated JSON schema is valid
@@ -35,7 +44,6 @@ def test_invalid_ipv4_addresses(address) -> None:
     ipv4_definitions = test_json_schema["$defs"]["ipv4"]
     with pytest.raises(jsonschema.exceptions.ValidationError):
         jsonschema.validate(address, ipv4_definitions)
-        assert True
 
 
 # Test the JSON schema with valid IPv6 addresses
@@ -71,7 +79,6 @@ def test_invalid_ipv6_addresses(address) -> None:
     ipv6_definitions = test_json_schema["$defs"]["ipv6"]
     with pytest.raises(jsonschema.exceptions.ValidationError):
         jsonschema.validate(address, ipv6_definitions)
-        assert True
 
 
 # Test the JSON schema with valid IPv4 CIDR addresses
@@ -79,7 +86,6 @@ def test_invalid_ipv6_addresses(address) -> None:
 def test_valid_ipv4_cidr_addresses(address) -> None:
     ipv4_cidr_definitions = test_json_schema["$defs"]["ipv4_cidr"]
     jsonschema.validate(address, ipv4_cidr_definitions)
-    assert True
 
 
 # Test the JSON schema with some invalid IPv4 CIDR addresses, make sure they raise a ValidationError
@@ -88,7 +94,6 @@ def test_invalid_ipv4_cidr_addresses(address) -> None:
     ipv4_cidr_definitions = test_json_schema["$defs"]["ipv4_cidr"]
     with pytest.raises(jsonschema.exceptions.ValidationError):
         jsonschema.validate(address, ipv4_cidr_definitions)
-        assert True
 
 
 # Test the JSON schema with valid IPv6 CIDR addresses
@@ -121,7 +126,6 @@ def test_invalid_ipv6_cidr_addresses(address) -> None:
     ipv6_cidr_definitions = test_json_schema["$defs"]["ipv6_cidr"]
     with pytest.raises(jsonschema.exceptions.ValidationError):
         jsonschema.validate(address, ipv6_cidr_definitions)
-        assert True
 
 
 # Test the JSON schema with valid IPv4 prefixes
@@ -141,7 +145,6 @@ def test_invalid_ipv4_prefixes(address) -> None:
     ipv4_prefix_definitions = test_json_schema["$defs"]["ipv4_prefix"]
     with pytest.raises(jsonschema.exceptions.ValidationError):
         jsonschema.validate(address, ipv4_prefix_definitions)
-        assert True
 
 
 # Test the JSON schema with valid IPv6 prefixes
@@ -162,7 +165,6 @@ def test_invalid_ipv6_prefixes(address) -> None:
     ipv6_prefix_definitions = test_json_schema["$defs"]["ipv6_prefix"]
     with pytest.raises(jsonschema.exceptions.ValidationError):
         jsonschema.validate(address, ipv6_prefix_definitions)
-        assert True
 
 
 # Test the JSON schema with valid domain names
@@ -192,4 +194,3 @@ def test_invalid_domains(domain) -> None:
     domain_definitions = test_json_schema["$defs"]["domain"]
     with pytest.raises(jsonschema.exceptions.ValidationError):
         jsonschema.validate(domain, domain_definitions)
-        assert True
