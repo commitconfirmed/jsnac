@@ -1,7 +1,7 @@
-import os
 import logging
 import json
 import yaml
+
 
 class SchemaInferer:
     def __init__(self):
@@ -33,7 +33,7 @@ class SchemaInferer:
 
     def build(self):
         # Check if the data has been added
-        if not hasattr(self, 'data'):
+        if not hasattr(self, "data"):
             self.log.error("No data has been added to the schema inferer")
             raise Exception("No data has been added to the schema inferer. Use add_json or add_yaml to add data.")
         else:
@@ -52,7 +52,7 @@ class SchemaInferer:
                     "type": "string",
                     "pattern": "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])$",
                     "title": "IPv4 Address",
-                    "description": "IPv4 address (String) \n Format: xxx.xxx.xxx.xxx"
+                    "description": "IPv4 address (String) \n Format: xxx.xxx.xxx.xxx",
                 },
                 # Decided to just go simple for now, may add more complex validation in the future from
                 # https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
@@ -60,49 +60,49 @@ class SchemaInferer:
                     "type": "string",
                     "pattern": "^(([a-fA-F0-9]{1,4}|):){1,7}([a-fA-F0-9]{1,4}|:)$",
                     "title": "IPv6 Address",
-                    "description": "Short IPv6 address (String) \n Accepts both full and short form addresses, link-local addresses, and IPv4-mapped addresses"
+                    "description": "Short IPv6 address (String) \n Accepts both full and short form addresses, link-local addresses, and IPv4-mapped addresses",
                 },
                 "ipv4_cidr": {
                     "type": "string",
                     "pattern": "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])/(1[0-9]|[0-9]|2[0-9]|3[0-2])$",
                     "title": "IPv4 CIDR",
-                    "description": "IPv4 CIDR (String) \n Format: xxx.xxx.xxx.xxx/xx"
+                    "description": "IPv4 CIDR (String) \n Format: xxx.xxx.xxx.xxx/xx",
                 },
                 "ipv6_cidr": {
                     "type": "string",
                     "pattern": "(([a-fA-F0-9]{1,4}|):){1,7}([a-fA-F0-9]{1,4}|:)/(32|36|40|44|48|52|56|60|64|128)$",
                     "title": "IPv6 CIDR",
-                    "description": "Full IPv6 CIDR (String) \n Format: xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/xxx"
+                    "description": "Full IPv6 CIDR (String) \n Format: xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/xxx",
                 },
                 "ipv4_prefix": {
                     "type": "string",
                     "title": "IPv4 Prefix",
                     "pattern": "^/(1[0-9]|[0-9]|2[0-9]|3[0-2])$",
-                    "description": "IPv4 Prefix (String) \n Format: /xx between 0 and 32"
+                    "description": "IPv4 Prefix (String) \n Format: /xx between 0 and 32",
                 },
                 "ipv6_prefix": {
                     "type": "string",
                     "title": "IPv6 Prefix",
                     "pattern": "^/(32|36|40|44|48|52|56|60|64|128)$",
-                    "description": "IPv6 prefix (String) \n Format: /xx between 32 and 64 in increments of 4. also /128"
+                    "description": "IPv6 prefix (String) \n Format: /xx between 32 and 64 in increments of 4. also /128",
                 },
                 "domain": {
                     "type": "string",
                     "pattern": "^([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,63}$",
                     "title": "Domain Name",
-                    "description": "Domain name (String) \n Format: example.com"
+                    "description": "Domain name (String) \n Format: example.com",
                 },
                 # String is a default type, but in this instance we restict it to alphanumeric + special characters with a max length of 255
                 "string": {
                     "type": "string",
                     "pattern": "^[a-zA-Z0-9!@#$%^&*()_+-\\{\\}|:;\"'<>,.?/ ]{1,255}$",
                     "title": "String",
-                    "description": "Alphanumeric string with special characters (String) \n Max length: 255"
+                    "description": "Alphanumeric string with special characters (String) \n Max length: 255",
                 },
             },
             "type": "object",
             "additionalProperties": False,
-            "properties": self.infer_properties(data)["properties"]
+            "properties": self.infer_properties(data)["properties"],
         }
         return json.dumps(schema, indent=4)
 
@@ -111,70 +111,71 @@ class SchemaInferer:
         schema = {}
         # Check if the dictionary has a jsnac_type key in it, then we know we can use our custom schema definitions
         if isinstance(data, dict):
-            if 'jsnac_type' in data:
-                match data['jsnac_type']:
-                    case 'ipv4':
-                        schema['$ref'] = "#/$defs/ipv4"
-                    case 'ipv6':
-                        schema['$ref'] = "#/$defs/ipv6"
-                    case 'ipv4_cidr':
-                        schema['$ref'] = "#/$defs/ipv4_cidr"
-                    case 'ipv6_cidr':
-                        schema['$ref'] = "#/$defs/ipv6_cidr"
-                    case 'ipv4_prefix':
-                        schema['$ref'] = "#/$defs/ipv4_prefix"
-                    case 'ipv6_prefix':
-                        schema['$ref'] = "#/$defs/ipv6_prefix"
-                    case 'domain':
-                        schema['$ref'] = "#/$defs/domain"
-                    case 'string':
-                        schema['$ref'] = "#/$defs/string"
-                    case 'pattern':
-                        if 'jsnac_pattern' not in data:
-                            self.log.error(f"jsnac_pattern key is required for jsnac_type: pattern.")
-                            schema['type'] = "null"
-                            schema['title'] = "Error"
-                            schema['description'] = "No jsnac_pattern key provided"
+            if "jsnac_type" in data:
+                match data["jsnac_type"]:
+                    case "ipv4":
+                        schema["$ref"] = "#/$defs/ipv4"
+                    case "ipv6":
+                        schema["$ref"] = "#/$defs/ipv6"
+                    case "ipv4_cidr":
+                        schema["$ref"] = "#/$defs/ipv4_cidr"
+                    case "ipv6_cidr":
+                        schema["$ref"] = "#/$defs/ipv6_cidr"
+                    case "ipv4_prefix":
+                        schema["$ref"] = "#/$defs/ipv4_prefix"
+                    case "ipv6_prefix":
+                        schema["$ref"] = "#/$defs/ipv6_prefix"
+                    case "domain":
+                        schema["$ref"] = "#/$defs/domain"
+                    case "string":
+                        schema["$ref"] = "#/$defs/string"
+                    case "pattern":
+                        if "jsnac_pattern" not in data:
+                            self.log.error("jsnac_pattern key is required for jsnac_type: pattern.")
+                            schema["type"] = "null"
+                            schema["title"] = "Error"
+                            schema["description"] = "No jsnac_pattern key provided"
                         else:
-                            schema['type'] = "string"
-                            schema['pattern'] = data['jsnac_pattern']
-                            schema['title'] = "Custom Pattern"
-                            schema['description'] = "Custom Pattern (regex) \n Pattern: " + data['jsnac_pattern']
-                    case 'choice':
-                        if 'jsnac_choices' not in data:
-                            self.log.error(f"jsnac_choices key is required for jsnac_type: choice.")
-                            schema['enum'] = ["Error"]
-                            schema['title'] = "Error"
-                            schema['description'] = "No jsnac_choices key provided"
+                            schema["type"] = "string"
+                            schema["pattern"] = data["jsnac_pattern"]
+                            schema["title"] = "Custom Pattern"
+                            schema["description"] = "Custom Pattern (regex) \n Pattern: " + data["jsnac_pattern"]
+                    case "choice":
+                        if "jsnac_choices" not in data:
+                            self.log.error("jsnac_choices key is required for jsnac_type: choice.")
+                            schema["enum"] = ["Error"]
+                            schema["title"] = "Error"
+                            schema["description"] = "No jsnac_choices key provided"
                         else:
-                            schema['enum'] = data['jsnac_choices']
-                            schema['title'] = "Custom Choice"
-                            schema['description'] = "Custom Choice (enum) \n Choices: " + ", ".join(data['jsnac_choices'])
+                            schema["enum"] = data["jsnac_choices"]
+                            schema["title"] = "Custom Choice"
+                            schema["description"] = "Custom Choice (enum) \n Choices: " + ", ".join(
+                                data["jsnac_choices"]
+                            )
                     case _:
                         self.log.error(f"Invalid jsnac_type: ({data['jsnac_type']}), defaulting to null")
-                        schema['type'] = "null"
-                        schema['title'] = "Error"
-                        schema['description'] = "Invalid jsnac_type (" + data['jsnac_type'] + ") defined"
+                        schema["type"] = "null"
+                        schema["title"] = "Error"
+                        schema["description"] = "Invalid jsnac_type (" + data["jsnac_type"] + ") defined"
             # If not, simply continue inferring the schema
             else:
-                schema['type'] = "object"
-                schema['properties'] = {k: self.infer_properties(v) for k, v in data.items()}
+                schema["type"] = "object"
+                schema["properties"] = {k: self.infer_properties(v) for k, v in data.items()}
         elif isinstance(data, list):
             if len(data) > 0:
-                schema['type'] = "array"
-                schema['items'] = self.infer_properties(data[0])
+                schema["type"] = "array"
+                schema["items"] = self.infer_properties(data[0])
             else:
-                schema['type'] = "array"
-                schema['items'] = {}
+                schema["type"] = "array"
+                schema["items"] = {}
         elif isinstance(data, str):
-            schema['type'] = "string"
+            schema["type"] = "string"
         elif isinstance(data, int):
-            schema['type'] = "integer"
+            schema["type"] = "integer"
         elif isinstance(data, float):
-            schema['type'] = "number"
+            schema["type"] = "number"
         elif isinstance(data, bool):
-            schema['type'] = "boolean"
+            schema["type"] = "boolean"
         else:
-            schema['type'] = "null"
+            schema["type"] = "null"
         return schema
-

@@ -1,12 +1,14 @@
 from jsnac.utils.jsnac_cli import main
 import pytest
 
+
 # Test CLI with no arguments
 def test_cli(capsys) -> None:
     with pytest.raises(SystemExit):
         main()
     output = capsys.readouterr()
     assert "error: the following arguments are required" in output.err
+
 
 # Test CLI with help argument
 def test_cli_help(capsys) -> None:
@@ -15,12 +17,14 @@ def test_cli_help(capsys) -> None:
     output = capsys.readouterr()
     assert "JSNAC CLI\n\noptions:" in output.out
 
+
 # Test CLI with version argument
 def test_cli_version(capsys) -> None:
     with pytest.raises(SystemExit):
         main(["--version"])
     output = capsys.readouterr()
     assert "JSNAC version" in output.out
+
 
 # Test CLI with file argument and included YAML file using JSNAC definitions
 def test_cli_file_yaml_jsnac(capsys) -> None:
@@ -29,12 +33,14 @@ def test_cli_file_yaml_jsnac(capsys) -> None:
     output = capsys.readouterr()
     assert "JSNAC CLI complete" in output.err
 
+
 # Test CLI with file argument and regular YAML file
 def test_cli_file_yaml(capsys) -> None:
     with pytest.raises(SystemExit):
         main(["-f", "data/example.yml"])
     output = capsys.readouterr()
     assert "JSNAC CLI complete" in output.err
+
 
 # Test CLI with file argument and included JSON file using JSNAC definitions
 def test_cli_file_json(capsys) -> None:
