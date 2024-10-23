@@ -1,3 +1,30 @@
+#!/usr/bin/env python3
+"""
+File: jsnac/utils/jsnac_cli.py
+Author: Andrew Jones
+Copyright: 2024
+License: Apache 2.0
+Description:
+
+JSNAC CLI Utility
+
+This module provides a command-line interface (CLI) for the JSNAC application, which is used to convert YAML files
+to JSON and build schemas. It includes functions for setting up logging, parsing command-line arguments,
+and processing input files to infer schemas.
+
+Functions:
+    _setup_logging() -> logging.Logger:
+        Sets up logging for the JSNAC CLI.
+
+    parse_args(args: str | None = None) -> ArgumentParser.parse_args:
+        Parses command-line arguments for the JSNAC CLI.
+
+    main(args: str | None = None) -> None:
+        Main function for the JSNAC CLI. Parses command-line arguments, sets up logging,
+        and processes input files to infer schemas.
+"""
+
+# Dependencies (Standard Library)
 import logging
 import sys
 import time
@@ -7,8 +34,14 @@ from pathlib import Path
 from jsnac import SchemaInferer, __version__
 
 
-# Setup logging
-def _setup_logging():  # noqa: ANN202
+def _setup_logging() -> logging.Logger:
+    """
+    Set up logging for the JSNAC CLI.
+
+    Returns:
+        logging.Logger: A logger instance for the JSNAC CLI.
+
+    """
     log = logging.getLogger("jsnac")
     log.setLevel(logging.DEBUG)
     formatter = logging.Formatter("[%(levelname)s] - %(name)s - %(message)s")
@@ -19,7 +52,8 @@ def _setup_logging():  # noqa: ANN202
 
 
 def parse_args(args: str | None = None) -> ArgumentParser.parse_args:
-    """Parse command-line arguments for the JSNAC CLI.
+    """
+    Parse command-line arguments for the JSNAC CLI.
 
     Args:
         args (str | None): A string of arguments to parse. If None, the arguments
@@ -75,7 +109,8 @@ def parse_args(args: str | None = None) -> ArgumentParser.parse_args:
 
 
 def main(args: str | None = None) -> None:
-    """Main function for the JSNAC CLI.
+    """
+    Main function for the JSNAC CLI.
 
     This function parses command-line arguments, sets up logging, and processes
     an input file (either JSON or YAML) to infer a schema using the SchemaInferer
