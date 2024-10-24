@@ -30,6 +30,7 @@ pytest-cov = ">=5.0.0,<6.0.0"
 jsonschema = ">=4.23.0,<5.0.0"
 tox = ">=4.21.0,<5.0.0"
 mypy = ">=1.12.1,<2.0.0"
+types-PyYAML = ">=6.0.12,<7.0.0"
 ruff = ">=0.7.0,<1.0.0"
 
 [tool.poetry.group.docs.dependencies]
@@ -41,6 +42,11 @@ python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+exclude = [
+    "venv.*/",
+    "data/",
+    "tests/",
+]
 
 # Basic ruff configuration until I learn more about it
 [tool.ruff]
