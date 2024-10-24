@@ -94,7 +94,7 @@ class SchemaInferer:
         self.log.debug("JSON content: \n %s", json_dump)
         self.data = json_data
 
-    def build(self) -> dict:
+    def build(self) -> str:
         """
         Builds a JSON schema based on the data added to the schema inferer.
 
@@ -185,7 +185,7 @@ class SchemaInferer:
         }
         return json.dumps(schema, indent=4)
 
-    def infer_properties(self, data: dict) -> dict:  # noqa: C901 PLR0912 PLR0915 (To be fixed)
+    def infer_properties(self, data: str) -> dict:  # noqa: C901 PLR0912 PLR0915 (To be fixed)
         """
         Infers the JSON schema properties for the given data.
 
@@ -193,7 +193,7 @@ class SchemaInferer:
         It supports custom schema definitions based on the "jsnac_type" key in the input dictionary.
 
         Args:
-            data (dict): The input data to infer the schema from.
+            data (str): The input data to infer the schema from.
 
         Returns:
             dict: A dictionary representing the inferred JSON schema.
@@ -241,7 +241,7 @@ class SchemaInferer:
                     case "choice":
                         if "jsnac_choices" not in data:
                             self.log.error("jsnac_choices key is required for jsnac_type: choice.")
-                            schema["enum"] = ["Error"]
+                            schema["enum"] = "Error"
                             schema["title"] = "Error"
                             schema["description"] = "No jsnac_choices key provided"
                         else:
@@ -259,6 +259,7 @@ class SchemaInferer:
             else:
                 schema["type"] = "object"
                 schema["properties"] = {k: self.infer_properties(v) for k, v in data.items()}
+
         elif isinstance(data, list):
             if len(data) > 0:
                 schema["type"] = "array"

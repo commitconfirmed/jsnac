@@ -16,7 +16,7 @@ Functions:
     _setup_logging() -> logging.Logger:
         Sets up logging for the JSNAC CLI.
 
-    parse_args(args: str | None = None) -> ArgumentParser.parse_args:
+    parse_args(args: str | None = None) -> Namespace:
         Parses command-line arguments for the JSNAC CLI.
 
     main(args: str | None = None) -> None:
@@ -28,7 +28,7 @@ Functions:
 import logging
 import sys
 import time
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
 from jsnac import SchemaInferer, __version__
@@ -51,7 +51,7 @@ def _setup_logging() -> logging.Logger:
     return log
 
 
-def parse_args(args: str | None = None) -> ArgumentParser.parse_args:
+def parse_args(args: str | None = None) -> Namespace:
     """
     Parse command-line arguments for the JSNAC CLI.
 
@@ -121,24 +121,24 @@ def main(args: str | None = None) -> None:
                            will be parsed from sys.argv.
 
     """
-    args = parse_args(args)
+    flags: Namespace = parse_args(args)
     log = _setup_logging()
-    if args.verbose:
+    if flags.verbose:
         log.setLevel(logging.DEBUG)
     else:
         log.setLevel(logging.INFO)
     log.info("Starting JSNAC CLI")
     # File is required but checking anyway
-    if args.file:
-        input_file = Path(args.file)
+    if flags.file:
+        input_file = Path(flags.file)
         jsnac = SchemaInferer()
-        if args.json:
-            log.debug("Using JSON file: %s", args.file)
+        if flags.json:
+            log.debug("Using JSON file: %s", flags.file)
             with input_file.open() as f:
                 jsnac.add_json(f.read())
                 f.close()
         else:
-            log.debug("Using YAML file: %s", args.file)
+            log.debug("Using YAML file: %s", flags.file)
             with input_file.open() as f:
                 jsnac.add_yaml(f.read())
                 f.close()
@@ -149,7 +149,7 @@ def main(args: str | None = None) -> None:
         duration = toc - tic
         log.info("Schema built in %.4f seconds", duration)
         # Write the schema to a file
-        schema_file = Path(args.output)
+        schema_file = Path(flags.output)
         with schema_file.open(mode="w") as f:
             f.write(schema)
         log.info("Schema written to: %s", schema_file)
