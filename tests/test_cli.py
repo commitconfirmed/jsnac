@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import pytest
 
 from jsnac.utils.jsnac_cli import main

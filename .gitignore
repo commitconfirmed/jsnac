@@ -1,3 +1,4 @@
+# Poetry and Python stuff
 **/*.egg-info/
 **/*.pyc
 **/*.pyo
@@ -5,7 +6,16 @@
 **/__pycache__
 .venv/
 .pytest_cache/
+
+# Tox
 .tox/
+
+# Coverage
 .coverage
 htmlcov/
+
+# Sphinx documentation
+docs/build/
+
+# JSNAC output file
 jsnac.schema.json
