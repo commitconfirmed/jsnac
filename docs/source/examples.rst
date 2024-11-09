@@ -26,9 +26,9 @@ Library usage:
 **************************************************
 .. code-block:: python
 
-    """This example demonstrates how to use the jsnac library to build a JSON schema from a YAML file in a Python script.
-
-    The YAML file used in this example is a simple network configuration file that contains a list of interfaces and their configurations. It is available Here: <https://www.github.com/commitconfirmed/jsnac/blob/main/data/example-jsnac.yml>
+    """
+    This example demonstrates how to use the jsnac library to build a JSON schema from a YAML file in a Python script.
+    Example yml file is available here: <https://www.github.com/commitconfirmed/jsnac/blob/main/data/example-jsnac.yml>
     """
     from jsnac.core.infer import SchemaInferer
 
