@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""
-File: jsnac/core/infer.py
-Author: Andrew Jones
-Copyright: 2024
-License: Apache 2.0
-Description: SchemaInferer class for inferring JSON schemas from JSON or YAML data.
-"""
 
 import json
 import logging

@@ -6,27 +6,26 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'JSNAC'
-copyright = '2024, Andrew Jones'
-author = 'Andrew Jones'
-release = '0.1.0'
+project = "JSNAC"
+copyright = "2024, Andrew Jones"
+author = "Andrew Jones"
+release = "0.1.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-import os
 import sys
-sys.path.insert(0, os.path.abspath('../../jsnac/'))
+from pathlib import Path
 
-extensions = ['sphinx.ext.autodoc']
+fp = Path(__file__).resolve().parent.parent / "jsnac"
+sys.path.insert(0, str(fp))
 
-templates_path = ['_templates']
-exclude_patterns = []
+extensions = ["sphinx.ext.autodoc"]
 
-
+templates_path = ["_templates"]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]

@@ -60,6 +60,7 @@ select = ["ALL"]
 ignore = [
     "COM812",   # Recommended to be disabled
     "CPY001",   # Missing copyright notice at top of file
+    "D100",     # Missing docstring in public module
     "D205",     # One blank line required between summary line and description
     "D203",     # One blank line before class
     "D212",     # Multi-line docstring summary should start at the first line
@@ -85,6 +86,9 @@ ignore = [
     "F403",     # Wildcard imports
 ]
 "docs/**" = [
+    "A001",     # Variable `copyright` is shadowing a Python builtin
+    "D100",     # Missing docstring in public module
+    "E402",     # Module level import not at top of file
     "INP001",   # Requires __init__.py but docs folder is not a package.
 ]
 

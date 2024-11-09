@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
 """
-File: jsnac/utils/jsnac_cli.py
-Author: Andrew Jones
-Copyright: 2024
-License: Apache 2.0
-Description:
-
 JSNAC CLI Utility
 
 This module provides a command-line interface (CLI) for the JSNAC application, which is used to convert YAML files

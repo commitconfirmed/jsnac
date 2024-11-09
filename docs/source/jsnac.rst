@@ -1,19 +1,14 @@
 JSNAC Documentation
 ===================
 
-The ``SchemaInferer`` class
----------------------------
+Refer to the layout of the JSNAC package and its modules below.
 
-.. autoclass:: jsnac.SchemaInferer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module details
---------------
+Package details
+---------------
 
 .. toctree::
    :maxdepth: 4
 
    jsnac.core
    jsnac.utils
+
