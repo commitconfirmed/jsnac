@@ -13,6 +13,7 @@ JSNAC documentation
    intro
    examples
    jsnac
+   types
 
 Indices and tables
 ==================
