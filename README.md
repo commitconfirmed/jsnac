@@ -85,8 +85,50 @@ interfaces:
     ipv6: { jsnac_type: ipv6_cidr }
 ```
 
-A full list of jsnac_types is available in the documentation
+A full list of jsnac_types is available in the documentation (readthedocs coming soon)
 
 ## Usage
 
-You can use jsnac from the command line or by importing it and calling InferSchema?
+### CLI
+
+```bash
+# Print the help message
+jsnac -h
+
+# Build a JSON schema from a YAML file (default file is jsnac.schema.json)
+jsnac -f data/example-jsnac.yml
+
+# Build a JSON schema from a YAML file and save it to a custom file
+jsnac -f data/example-jsnac.yml -o my.schema.json
+
+# Increase the verbosity of the output
+jsnac -f data/example-jsnac.yml -v
+```
+
+### Library
+```python
+"""
+This example demonstrates how to use the jsnac library to build a JSON schema from a YAML file in a Python script.
+Example yml file is available here: <https://www.github.com/commitconfirmed/jsnac/blob/main/data/example-jsnac.yml>
+"""
+from jsnac.core.infer import SchemaInferer
+
+def main():
+    # Create a SchemaInferer object
+    jsnac = SchemaInferer()
+
+    # Load the YAML data however you like into the SchemaInferer object
+    with open('data/example-jsnac.yml', 'r') as file:
+        data = file.read()
+    jsnac.add_yaml(data)
+
+    # Loading from JSON directly is also supported if needed
+    # jsnac.add_json(json_data)
+
+    # Build the JSON schema
+    schema = jsnac.build()
+    print(schema)
+
+if __name__ == '__main__':
+    main()
+```

@@ -7,11 +7,10 @@ name = "jsnac"
 version = "0.1.0"
 description = "JSON Schema (for) Network as Code: Build JSON schemas from (un)modified YAML files"
 authors = ["Andrew Jones <jsnac@commitconfirmed.com>"]
-license = "Apache 2.0"
+license = "MIT"
 readme = "README.md"
 repository = "https://github.com/commitconfirmed/jsnac"
 classifiers = [
-        "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
