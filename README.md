@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/jsnac/badge/?version=latest)](https://jsnac.readthedocs.io/en/latest/?badge=latest)
+
 # JSNAC
 JSON Schema (for) Network as Code 
 
