@@ -1,4 +1,5 @@
-[![Documentation Status](https://readthedocs.org/projects/jsnac/badge/?version=latest)](https://jsnac.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/jsnac/badge/?version=latest)](https://jsnac.readthedocs.io/en/latest/?badge=latest) 
+![Build Status](https://github.com/commitconfirmed/jsnac/workflows/JSNAC%20TOX%20Suite/badge.svg)
 
 # JSNAC
 JSON Schema (for) Network as Code 
