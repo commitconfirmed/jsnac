@@ -1,44 +1,111 @@
 {
-    "chassis": {
+    "header": {
+        "id": "example-schema.json",
+        "schema": "http://json-schema.org/draft-07/schema",
+        "title": "JSNAC Created Schema",
+        "description": "The below schema was created by JSNAC (https://github.com/commitconfirmed/jsnac)"
+    },
+    "kinds": {
         "hostname": {
-            "jsnac_type": "pattern",
-            "jsnac_pattern": "^ceos-[a-zA-Z]{1,16}[0-9]$"
-        },
-        "model": "ceos",
-        "type": {
-            "jsnac_type": "choice",
-            "jsnac_choices": [
-                "router",
-                "switch",
-                "spine",
-                "leaf"
+            "title": "Hostname",
+            "description": "Hostname of the device",
+            "type": "pattern",
+            "regex": "^[a-zA-Z0-9-]{1,63}$"
+        }
+    },
+    "schema": {
+        "chassis": {
+            "title": "Chassis",
+            "description": "Chassis information",
+            "type": "object",
+            "properties": {
+                "hostname": {
+                    "kind": {
+                        "name": "hostname"
+                    }
+                },
+                "model": {
+                    "kind": {
+                        "name": "string"
+                    }
+                },
+                "device_type": {
+                    "title": "Type",
+                    "description": "Type of the device",
+                    "kind": {
+                        "name": "choice",
+                        "choices": [
+                            "router",
+                            "switch",
+                            "firewall",
+                            "load-balancer"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "hostname",
+                "model",
+                "type"
             ]
-        }
-    },
-    "system": {
-        "domain_name": {
-            "jsnac_type": "domain"
         },
-        "ntp_servers": [
-            {
-                "jsnac_type": "ipv4"
-            }
-        ]
-    },
-    "interfaces": [
-        {
-            "if": {
-                "jsnac_type": "string"
+        "system": {
+            "title": "System",
+            "description": "System information",
+            "type": "object",
+            "properties": {
+                "domain_name": {
+                    "kind": {
+                        "name": "string"
+                    }
+                },
+                "ntp_servers": {
+                    "title": "NTP Servers",
+                    "description": "List of NTP servers",
+                    "type": "array",
+                    "items": {
+                        "kind": {
+                            "name": "ipv4"
+                        }
+                    }
+                }
             },
-            "desc": {
-                "jsnac_type": "string"
-            },
-            "ipv4": {
-                "jsnac_type": "ipv4_cidr"
-            },
-            "ipv6": {
-                "jsnac_type": "ipv6_cidr"
+            "required": [
+                "domain_name",
+                "ntp_servers"
+            ]
+        },
+        "interfaces": {
+            "title": "Interfaces",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "if": {
+                        "kind": {
+                            "name": "string"
+                        }
+                    },
+                    "desc": {
+                        "kind": {
+                            "name": "string"
+                        }
+                    },
+                    "ipv4": {
+                        "kind": {
+                            "name": "ipv4_cidr"
+                        }
+                    },
+                    "ipv6": {
+                        "kind": {
+                            "name": "ipv6_cidr"
+                        }
+                    }
+                },
+                "required": [
+                    "if"
+                ]
             }
         }
-    ]
+    }
 }

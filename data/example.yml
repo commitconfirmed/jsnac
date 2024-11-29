@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=example.schema.json
-
+---
 chassis:
   hostname: "ceos-spine1"
   model: "ceos"

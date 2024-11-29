@@ -1,34 +1,37 @@
 #!/usr/bin/env python3
+import json
+
 from jsnac.core.infer import SchemaInferer
 
 
-# Test SchemaInferer with jsnac_type: ipv4
-def test_infer_ipv4() -> None:
-    data = {"jsnac_type": "ipv4"}
-    schema = SchemaInferer().infer_properties(data)
-    assert schema == {"$ref": "#/$defs/ipv4"}
-
-
-# Test SchemaInferer with jsnac_type: ipv6
-def test_infer_ipv6() -> None:
-    data = {"jsnac_type": "ipv6"}
-    schema = SchemaInferer().infer_properties(data)
-    assert schema == {"$ref": "#/$defs/ipv6"}
-
-
-# Test SchemaInferer with jsnac_type: ipv4_cidr
-def test_infer_ipv4_cidr() -> None:
-    data = {"jsnac_type": "ipv4_cidr"}
-    schema = SchemaInferer().infer_properties(data)
-    assert schema == {"$ref": "#/$defs/ipv4_cidr"}
-
-
-# Test SchemaInferer with an invalid jsnac_type
-def test_infer_invalid_type() -> None:
-    data = {"jsnac_type": "invalid"}
-    schema = SchemaInferer().infer_properties(data)
-    assert schema == {
-        "type": "null",
-        "title": "Error",
-        "description": "Invalid jsnac_type (invalid) defined",
+# Test that custom headers can be set
+def test_custom_headers() -> None:
+    data = {
+        "header": {
+            "schema": "http://json-schema.org/draft/2020-12/schema",
+            "title": "Test Title",
+            "id": "test-schema.json",
+            "description": "Test Description",
+        }
     }
+    jsnac = SchemaInferer()
+    jsnac.add_json(json.dumps(data))
+    schema = json.loads(jsnac.build_schema())
+    assert schema["$schema"] == "http://json-schema.org/draft/2020-12/schema"
+    assert schema["title"] == "Test Title"
+    assert schema["$id"] == "test-schema.json"
+    assert schema["description"] == "Test Description"
+
+
+# Test that default headers are set
+def test_default_headers() -> None:
+    data = {"header": {}}
+    jsnac = SchemaInferer()
+    jsnac.add_json(json.dumps(data))
+    schema = json.loads(jsnac.build_schema())
+    assert schema["$schema"] == "http://json-schema.org/draft-07/schema#"
+    assert schema["title"] == "JSNAC created Schema"
+    assert schema["$id"] == "jsnac.schema.json"
+    assert schema["description"] == "https://github.com/commitconfirmed/jsnac"
+    assert schema["type"] == "object"
+    assert schema["properties"] == {}

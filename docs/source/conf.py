@@ -9,7 +9,7 @@
 project = "JSNAC"
 copyright = "2024, Andrew Jones"
 author = "Andrew Jones"
-release = "0.1.0"
+release = "0.2.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

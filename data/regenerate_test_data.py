@@ -57,7 +57,7 @@ def main() -> None:  # noqa: D103
     with example_jsnac_file.open() as f:
         jsnac = SchemaInferer()
         jsnac.add_yaml(f.read())
-        schema = jsnac.build()
+        schema = jsnac.build_schema()
         f.close()
     with output_schema_file.open(mode="w") as f:
         f.write(schema)
