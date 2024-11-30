@@ -138,7 +138,7 @@ def main(args: str | None = None) -> None:
                 f.close()
         # Build the schema and record the time taken
         tic = time.perf_counter()
-        schema = jsnac.build()
+        schema = jsnac.build_schema()
         toc = time.perf_counter()
         duration = toc - tic
         log.info("Schema built in %.4f seconds", duration)

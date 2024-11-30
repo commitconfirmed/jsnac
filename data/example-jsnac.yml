@@ -1,14 +1,77 @@
-chassis:
-  hostname: { jsnac_type: pattern, jsnac_pattern: "^ceos-[a-zA-Z]{1,16}[0-9]$" }
-  model: "ceos"
-  type: { jsnac_type: choice, jsnac_choices: ["router", "switch", "spine", "leaf"] }
+---
+header:
+  id: "example-schema.json"
+  schema: "http://json-schema.org/draft-07/schema"
+  title: "Example Schema"
+  description: |
+    Ansible host vars for my networking device. Requires the below objects:
+    - chassis
+    - system
+    - interfaces
 
-system:
-  domain_name: { jsnac_type: domain }
-  ntp_servers: [ { jsnac_type: ipv4 } ]
-  
-interfaces:
-  - if: { jsnac_type: string }
-    desc: { jsnac_type: string }
-    ipv4: { jsnac_type: ipv4_cidr }
-    ipv6: { jsnac_type: ipv6_cidr }
+kinds:
+  hostname:
+    title: "Hostname"
+    description: "Hostname of the device"
+    type: "pattern"
+    regex: "^[a-zA-Z0-9-]{1,63}$"
+
+schema:
+  chassis:
+    title: "Chassis"
+    description: | 
+      Object containing Chassis information. Has the below properties: 
+      hostname [required]: hostname
+      model [required]: string
+      device_type [required]: choice (router, switch, firewall, load-balancer)
+    type: "object"
+    properties:
+      hostname:
+        kind: { name: "hostname" }
+      model:
+        kind: { name: "string" }
+      device_type:
+        title: "Device Type"
+        description: |
+          Device Type options are:
+          router, switch, firewall, load-balancer
+        kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
+    required: [ "hostname", "model", "device_type" ]
+  system:
+    title: "System"
+    description: |
+      Object containing System information. Has the below properties:
+      domain_name [required]: string
+      ntp_servers [required]: list of ipv4 addresses
+    type: "object"
+    properties:
+      domain_name:
+        kind: { name: "string" }
+      ntp_servers:
+        title: "NTP Servers"
+        description: "List of NTP servers"
+        type: "array"
+        items:
+          kind: { name: "ipv4" } 
+    required: [ "domain_name", "ntp_servers" ]
+  interfaces:
+    title: "Device Interfaces"
+    description: |
+      List of device interfaces. Each interface has the below properties:
+      if [required]: string
+      desc: string
+      ipv4: ipv4_cidr
+      ipv6: ipv6_cidr
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        if:
+          kind: { name: "string" }
+        desc:
+          kind: { name: "string" }
+        ipv4:
+          kind: { name: "ipv4_cidr" }
+        ipv6:
+          kind: { name: "ipv6_cidr" }
+      required: [ "if" ]

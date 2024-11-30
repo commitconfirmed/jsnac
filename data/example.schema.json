@@ -1,7 +1,8 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "title": "JSNAC Created Schema",
-    "description": "The below schema was created by JSNAC (https://github.com/commitconfirmed/jsnac)",
+    "title": "Example Schema",
+    "$id": "example-schema.json",
+    "description": "Ansible host vars for my networking device. Requires the below objects:\n- chassis\n- system\n- interfaces\n",
     "$defs": {
         "ipv4": {
             "type": "string",
@@ -45,64 +46,86 @@
             "title": "Domain Name",
             "description": "Domain name (String) \n Format: example.com"
         },
-        "string": {
+        "hostname": {
+            "title": "Hostname",
+            "description": "Hostname of the device",
             "type": "string",
-            "pattern": "^[a-zA-Z0-9!@#$%^&*()_+-\\{\\}|:;\"'<>,.?/ ]{1,255}$",
-            "title": "String",
-            "description": "Alphanumeric string with special characters (String) \n Max length: 255"
+            "pattern": "^[a-zA-Z0-9-]{1,63}$"
         }
     },
     "type": "object",
     "additionalProperties": false,
     "properties": {
         "chassis": {
+            "title": "Chassis",
+            "description": "Object containing Chassis information. Has the below properties: \nhostname [required]: hostname\nmodel [required]: string\ndevice_type [required]: choice (router, switch, firewall, load-balancer)\n",
             "type": "object",
             "properties": {
                 "hostname": {
-                    "type": "string",
-                    "pattern": "^ceos-[a-zA-Z]{1,16}[0-9]$",
-                    "title": "Custom Pattern",
-                    "description": "Custom Pattern (regex) \n Pattern: ^ceos-[a-zA-Z]{1,16}[0-9]$"
+                    "$ref": "#/$defs/hostname"
                 },
                 "model": {
-                    "type": "string"
+                    "type": "string",
+                    "title": "model",
+                    "description": "String"
                 },
-                "type": {
+                "device_type": {
+                    "title": "Device Type",
+                    "description": "Device Type options are:\nrouter, switch, firewall, load-balancer\n",
                     "enum": [
                         "router",
                         "switch",
-                        "spine",
-                        "leaf"
-                    ],
-                    "title": "Custom Choice",
-                    "description": "Custom Choice (enum) \n Choices: router, switch, spine, leaf"
+                        "firewall",
+                        "load-balancer"
+                    ]
                 }
-            }
+            },
+            "required": [
+                "hostname",
+                "model",
+                "device_type"
+            ]
         },
         "system": {
+            "title": "System",
+            "description": "Object containing System information. Has the below properties:\ndomain_name [required]: string\nntp_servers [required]: list of ipv4 addresses\n",
             "type": "object",
             "properties": {
                 "domain_name": {
-                    "$ref": "#/$defs/domain"
+                    "type": "string",
+                    "title": "domain_name",
+                    "description": "String"
                 },
                 "ntp_servers": {
+                    "title": "NTP Servers",
+                    "description": "List of NTP servers",
                     "type": "array",
                     "items": {
                         "$ref": "#/$defs/ipv4"
                     }
                 }
-            }
+            },
+            "required": [
+                "domain_name",
+                "ntp_servers"
+            ]
         },
         "interfaces": {
+            "title": "Device Interfaces",
+            "description": "List of device interfaces. Each interface has the below properties:\nif [required]: string\ndesc: string\nipv4: ipv4_cidr\nipv6: ipv6_cidr\n",
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
                     "if": {
-                        "$ref": "#/$defs/string"
+                        "type": "string",
+                        "title": "if",
+                        "description": "String"
                     },
                     "desc": {
-                        "$ref": "#/$defs/string"
+                        "type": "string",
+                        "title": "desc",
+                        "description": "String"
                     },
                     "ipv4": {
                         "$ref": "#/$defs/ipv4_cidr"
@@ -110,7 +133,10 @@
                     "ipv6": {
                         "$ref": "#/$defs/ipv6_cidr"
                     }
-                }
+                },
+                "required": [
+                    "if"
+                ]
             }
         }
     }

@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=example.schema.json
-
+---
 chassis:
   hostname: "ceos-spine1"
   model: "ceos"
-  type: "router"
+  device_type: "router"
 
 system:
   domain_name: "example.com"

@@ -45,7 +45,7 @@ Library usage:
         # jsnac.add_json(json_data)
 
         # Build the JSON schema
-        schema = jsnac.build()
+        schema = jsnac.build_schema()
         print(schema)
 
     if __name__ == '__main__':
