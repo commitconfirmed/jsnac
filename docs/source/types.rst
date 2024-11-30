@@ -1,24 +1,24 @@
-JSNAC Types
+JSNAC Kinds
 ===========
 
-See the following sections for details on the jsnac_types you can use in your YAML file(s).  
+See the following sections for details on the included JSNAC kinds you can use in your YAML file(s).  
 
-jsnac_type: pattern
+kind: pattern
 *******************
 
 This type is used to validate a string against a regular expression pattern.  
-The pattern should be a valid regex pattern that will be used to validate the string.  
+The pattern should be a valid regex pattern that will be used to validate the string. 
+If you are going to use this more than once, it is recommended to use the kinds section so you can reuse the pattern.
 
 **Example**
 
 .. code-block:: yaml
 
     chassis:
-      hostname:
-        jsnac_type: pattern
-        jsnac_pattern: "^ceos-[a-zA-Z]{1,16}[0-9]$"
+      hostname: 
+        kind: { name: "pattern", pattern: "^[a-zA-Z0-9-]{1,63}$" }
 
-jsnac_type: choice
+kind: choice
 ******************
 
 This type is used to validate a string against a list of choices.
@@ -30,10 +30,9 @@ The choices should be a list of strings that the string will be validated agains
 
     chassis:
       type:
-        jsnac_type: choice
-        jsnac_choices: ["router", "switch", "spine", "leaf"]
+        kind: { name: "choice", choices: ["router", "switch", "firewall"] }
 
-jsnac_type: domain
+kind: domain
 ******************
 
 This type is used to validate a string against a domain name.
@@ -49,4 +48,22 @@ The string will be validated against the below domain name regex pattern.
 
     system:
       domain_name: 
-        jsnac_type: domain
+        kind: { name: "domain" }
+
+kind: ipv4
+******************
+
+This type is used to validate a string against an IPv4 address.
+The string will be validated against the below IPv4 address regex pattern.
+
+.. code-block:: text
+
+    ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+
+**Example**
+
+.. code-block:: yaml
+
+    system:
+      ip_address: 
+        kind: { name: "ipv4" }

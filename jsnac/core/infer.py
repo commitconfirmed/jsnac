@@ -2,17 +2,26 @@
 
 import json
 import logging
+from typing import ClassVar
 
 import yaml
 
 
 class SchemaInferer:
     """
-    SchemaInferer is a class designed to infer JSON schemas from provided JSON or YAML data.
+    SchemaInferer is a class that infers JSON schemas from provided JSON or YAML data.
+
+        user_defined_kinds (dict): A class variable that stores user-defined kinds.
 
     Methods:
-        __init__() -> None:
-            Initializes the instance of the class, setting up a logger for the class instance.
+        __init__():
+            Initializes the instance of the class, setting up a logger.
+
+        _view_user_defined_kinds() -> dict:
+            Returns the user-defined kinds currently stored in the class variable.
+
+        _add_user_defined_kinds(kinds: dict) -> None:
+            Adds user-defined kinds to the class variable.
 
         add_json(json_data: str) -> None:
             Parses the provided JSON data and stores it in the instance.
@@ -20,15 +29,30 @@ class SchemaInferer:
         add_yaml(yaml_data: str) -> None:
             Parses the provided YAML data, converts it to JSON format, and stores it in the instance.
 
-        build() -> dict:
-            Builds a JSON schema based on the data added to the schema inferer.
+        build_schema() -> str:
+            Builds a JSON schema based on the data added to the schema inferer. Returns the constructed schema.
 
-        infer_properties(data: dict) -> dict:
-            Infers the JSON schema properties for the given data.
+        _build_definitions(data: dict) -> dict:
+            Builds the definitions section of the JSON schema.
+
+        _build_properties(data: dict) -> dict:
+            Builds the properties section of the JSON schema.
+
+        _build_property(obj: str, obj_data: dict) -> dict:
+            Builds a property for the JSON schema.
+
+        _build_property_type(obj: str, obj_data: dict) -> dict:
+            Builds the type for a property in the JSON schema.
+
+        _build_array_items(obj: str, obj_data: dict) -> dict:
+            Builds the items for an array property in the JSON schema.
+
+        _build_kinds(obj: str, data: dict) -> dict:
+            Builds the kinds for a property in the JSON schema.
 
     """
 
-    user_defined_kinds: dict = {}
+    user_defined_kinds: ClassVar[dict] = {}
 
     def __init__(self) -> None:
         """
@@ -46,11 +70,11 @@ class SchemaInferer:
         self.log.addHandler(logging.NullHandler())
 
     @classmethod
-    def access_user_defined_kinds(cls) -> dict:
+    def _view_user_defined_kinds(cls) -> dict:
         return cls.user_defined_kinds
 
     @classmethod
-    def add_user_defined_kinds(cls, kinds: dict) -> None:
+    def _add_user_defined_kinds(cls, kinds: dict) -> None:
         cls.user_defined_kinds.update(kinds)
 
     # Take in JSON data and confirm it is valid JSON
@@ -67,7 +91,7 @@ class SchemaInferer:
         """
         try:
             load_json_data = json.loads(json_data)
-            self.log.debug("JSON content: \n %s", json.dumps(load_json_data, indent=4))
+            self.log.debug("JSON content: \n%s", json.dumps(load_json_data, indent=4))
             self.data = load_json_data
         except json.JSONDecodeError as e:
             msg = "Invalid JSON data: %s", e
@@ -87,29 +111,36 @@ class SchemaInferer:
         """
         try:
             load_yaml_data = yaml.safe_load(yaml_data)
-            self.log.debug("YAML content: \n %s", load_yaml_data)
+            self.log.debug("YAML content: \n%s", load_yaml_data)
         except yaml.YAMLError as e:
             msg = "Invalid YAML data: %s", e
             self.log.exception(msg)
             raise ValueError(msg) from e
         json_dump = json.dumps(load_yaml_data, indent=4)
         json_data = json.loads(json_dump)
-        self.log.debug("JSON content: \n %s", json_dump)
+        self.log.debug("JSON content: \n%s", json_dump)
         self.data = json_data
 
     def build_schema(self) -> str:
         """
         Builds a JSON schema based on the data added to the schema inferer.
-
-        This methos builds the base schema including our custom definitions for common data types.
-        Properties are handled by the infer_properties method to infer the properties of the schema
-        based on the input data provided.
+        This method constructs a JSON schema using the data previously added via
+        `add_json` or `add_yaml` methods. It supports JSON Schema draft-07 by default,
+        but can be configured to use other drafts if needed.
 
         Returns:
             str: A JSON string representing the constructed schema.
 
         Raises:
             ValueError: If no data has been added to the schema inferer.
+
+        Notes:
+            - The schema's metadata (e.g., $schema, title, $id, description) is derived
+              from the "header" section of the provided data.
+            - Additional sub-schemas (definitions) can be added via the "kinds" section
+              of the provided data.
+            - The schemas for individual and nested properties are constructed
+              based on the "schema" section of the provided data.
 
         """
         # Check if the data has been added
@@ -119,7 +150,7 @@ class SchemaInferer:
             raise ValueError(msg)
         data = self.data
 
-        self.log.debug("Building schema for: \n %s ", json.dumps(data, indent=4))
+        self.log.debug("Building schema for: \n%s ", json.dumps(data, indent=4))
         # Using draft-07 until vscode $dynamicRef support is added (https://github.com/microsoft/vscode/issues/155379)
         # Feel free to replace this with http://json-schema.org/draft/2020-12/schema if not using vscode.
         schema = {
@@ -135,7 +166,21 @@ class SchemaInferer:
         return json.dumps(schema, indent=4)
 
     def _build_definitions(self, data: dict) -> dict:
-        self.log.debug("Building definitions for: \n %s ", json.dumps(data, indent=4))
+        """
+        Build a dictionary of definitions based on predefined types and additional kinds provided in the input data.
+
+        Args:
+            data (dict): A dictionary containing additional kinds to be added to the definitions.
+
+        Returns:
+            dict: A dictionary containing definitions for our predefined types such as 'ipv4', 'ipv6', etc.
+                  Additional kinds from the input data are also included.
+
+        Raises:
+            None
+
+        """
+        self.log.debug("Building definitions for: \n%s ", json.dumps(data, indent=4))
         definitions = {
             # JSNAC defined data types
             "ipv4": {
@@ -182,30 +227,20 @@ class SchemaInferer:
                 "title": "Domain Name",
                 "description": "Domain name (String) \n Format: example.com",
             },
-            # String is a default type, but in this instance we restict it to
-            # alphanumeric + special characters with a max length of 255.
-            "string": {
-                "type": "string",
-                "pattern": "^[a-zA-Z0-9!@#$%^&*()_+-\\{\\}|:;\"'<>,.?/ ]{1,255}$",
-                "title": "String",
-                "description": "Alphanumeric string with special characters (String) \n Max length: 255",
-            },
         }
         # Check passed data for additional kinds and add them to the definitions
         for kind, kind_data in data.items():
-            self.log.debug("Kind: %s ", kind)
-            self.log.debug("Kind Data: %s ", kind_data)
-            # Add the kind to the definitions
+            self.log.debug("Building custom kind (%s): \n%s ", kind, json.dumps(kind_data, indent=4))
             definitions[kind] = {}
-            definitions[kind]["title"] = kind_data.get("title", "%s" % kind)
-            definitions[kind]["description"] = kind_data.get("description", "Custom Kind: %s" % kind)
+            definitions[kind]["title"] = kind_data.get("title", f"{kind}")
+            definitions[kind]["description"] = kind_data.get("description", f"Custom Kind: {kind}")
             # Only support a custom kind of pattern for now, will add more in the future
             match kind_data.get("type"):
                 case "pattern":
                     definitions[kind]["type"] = "string"
                     if "regex" in kind_data:
                         definitions[kind]["pattern"] = kind_data["regex"]
-                        self.add_user_defined_kinds({kind: True})
+                        self._add_user_defined_kinds({kind: True})
                     else:
                         self.log.error("regex key is required for kind (%s) with type pattern", kind)
                         definitions[kind]["type"] = "null"
@@ -214,53 +249,90 @@ class SchemaInferer:
                 case _:
                     self.log.error("Invalid type (%s) for kind (%s), defaulting to string", kind_data.get("type"), kind)
                     definitions[kind]["type"] = "string"
-        self.log.debug("Returned Definitions: \n %s ", json.dumps(definitions, indent=4))
+        self.log.debug("Returned Definitions: \n%s ", json.dumps(definitions, indent=4))
         return definitions
 
     def _build_properties(self, data: dict) -> dict:
-        self.log.debug("Building properties for: \n %s ", json.dumps(data, indent=4))
+        self.log.debug("Building properties for: \n%s ", json.dumps(data, indent=4))
         properties: dict = {}
-        for object, object_data in data.items():
-            self.log.debug("Object: %s ", object)
-            self.log.debug("Object Data: %s ", object_data)
-            # Think of a way to have better defaults for title and description
-            # Also, inner properties aren't getting a default description for some reason?
-            properties[object] = {}
-            properties[object]["title"] = object_data.get("title", "%s" % object)
-            properties[object]["description"] = object_data.get("description", "Object: %s" % object)
-            # Check if our object has a type, if so we will continue to dig depper until kinds are found
-            if "type" in object_data:
-                match object_data.get("type"):
-                    case "object":
-                        properties[object]["type"] = "object"
-                        if "properties" in object_data:
-                            properties[object]["properties"] = self._build_properties(object_data["properties"])
-                    case "array":
-                        properties[object]["type"] = "array"
-                        # Check if the array contains an object type, if so we will build the properties for it
-                        if "type" in object_data["items"]:
-                            properties[object]["items"] = {}
-                            properties[object]["items"]["type"] = object_data["items"]["type"]
-                            properties[object]["items"]["properties"] = self._build_properties(
-                                object_data["items"]["properties"]
-                            )
-                        # Otherwise its just a list of a specific kind
-                        elif "kind" in object_data["items"]:
-                            properties[object]["items"] = self._build_kinds(object_data["items"]["kind"])
-                    case _:
-                        self.log.error(
-                            "Invalid type (%s) for object (%s), defaulting to Null", object_data.get("type"), object
-                        )
-                        properties[object]["type"] = "null"
-            # We've reached an object with a kind key, we can now build the reference based on the kind
-            elif "kind" in object_data:
-                kind = self._build_kinds(object_data["kind"])
-                properties[object] = kind
-        self.log.debug("Returned Properties: \n %s ", json.dumps(properties, indent=4))
+        stack = [(properties, data)]
+
+        while stack:
+            current_properties, current_data = stack.pop()
+            for obj, obj_data in current_data.items():
+                self.log.debug("Object: %s ", obj)
+                self.log.debug("Object Data: %s ", obj_data)
+                # Build the property for the object
+                current_properties[obj] = self._build_property(obj, obj_data)
+                # Check if there is a nested object or array type and add it to the stack
+                if "type" in obj_data and obj_data["type"] == "object" and "properties" in obj_data:
+                    stack.append((current_properties[obj]["properties"], obj_data["properties"]))
+                elif "type" in obj_data and obj_data["type"] == "array" and "items" in obj_data:
+                    item_data = obj_data["items"]
+                    # Array is nested if it contains properties
+                    if "properties" in item_data:
+                        stack.append((current_properties[obj]["items"]["properties"], item_data["properties"]))
+
+        self.log.debug("Returned Properties: \n%s ", json.dumps(properties, indent=4))
         return properties
 
-    def _build_kinds(self, data: dict) -> dict:  # noqa: C901 PLR0912
-        self.log.debug("Building kinds for: \n %s ", json.dumps(data, indent=4))
+    def _build_property(self, obj: str, obj_data: dict) -> dict:
+        self.log.debug("Building property for Object (%s): \n%s ", obj, json.dumps(obj_data, indent=4))
+        property_dict: dict = {}
+
+        if "title" in obj_data:
+            property_dict["title"] = obj_data["title"]
+        if "description" in obj_data:
+            property_dict["description"] = obj_data["description"]
+        if "type" in obj_data:
+            property_dict.update(self._build_property_type(obj, obj_data))
+        elif "kind" in obj_data:
+            property_dict.update(self._build_kinds(obj, obj_data["kind"]))
+
+        if "required" in obj_data:
+            property_dict["required"] = obj_data["required"]
+
+        self.log.debug("Returned Property: \n%s ", json.dumps(property_dict, indent=4))
+        return property_dict
+
+    def _build_property_type(self, obj: str, obj_data: dict) -> dict:
+        self.log.debug("Building property type for Object (%s): \n%s ", obj, json.dumps(obj_data, indent=4))
+        property_type = {"type": obj_data["type"]}
+        match obj_data["type"]:
+            case "object":
+                property_type["properties"] = {}
+            case "array":
+                property_type.update(self._build_array_items(obj, obj_data))
+            case _:
+                self.log.error("Invalid type (%s), defaulting to Null", obj_data["type"])
+                property_type["type"] = "null"
+        self.log.debug("Returned Property Type: \n%s ", json.dumps(property_type, indent=4))
+        return property_type
+
+    def _build_array_items(self, obj: str, obj_data: dict) -> dict:
+        self.log.debug("Building array items for Object (%s): \n%s ", obj, json.dumps(obj_data, indent=4))
+        array_items = {}
+        if "items" in obj_data:
+            item_data = obj_data["items"]
+            if "type" in item_data:
+                array_items["items"] = {"type": item_data["type"]}
+                if "properties" in item_data:
+                    array_items["items"]["properties"] = {}
+                if "required" in item_data:
+                    array_items["items"]["required"] = item_data["required"]
+            elif "kind" in item_data:
+                array_items["items"] = self._build_kinds(obj, item_data["kind"])
+            else:
+                self.log.error("Array items require a type or kind key")
+                array_items["items"] = {"type": "null"}
+        else:
+            self.log.error("Array type requires an items key")
+            array_items["items"] = {"type": "null"}
+        self.log.debug("Returned Array Items: \n%s ", json.dumps(array_items, indent=4))
+        return array_items
+
+    def _build_kinds(self, obj: str, data: dict) -> dict:  # noqa: C901 PLR0912
+        self.log.debug("Building kinds for Object (%s): \n%s ", obj, json.dumps(data, indent=4))
         kind: dict = {}
         # Check if the kind has a type, if so we will continue to dig depper until kinds are found
         # I should update this to be ruff compliant, but it makes sense to me at the moment
@@ -280,27 +352,34 @@ class SchemaInferer:
                 kind["$ref"] = "#/$defs/ipv6_prefix"
             case "domain":
                 kind["$ref"] = "#/$defs/domain"
-            # For the choice kind, read the choices key
+            # For the choice kind, read the choices object
             case "choice":
                 if "choices" in data:
                     kind["enum"] = data["choices"]
                 else:
-                    self.log.error("Choice kind requires a choices key")
+                    self.log.error("Choice kind requires a choices object")
+                    kind["description"] = "Choice kind requires a choices object"
                     kind["type"] = "null"
             # Default types
             case "string":
                 kind["type"] = "string"
+                kind["title"] = obj
+                kind["description"] = "String"
             case "number":
                 kind["type"] = "number"
+                kind["description"] = "Integer or Float"
             case "boolean":
                 kind["type"] = "boolean"
+                kind["description"] = "Boolean"
             case "null":
                 kind["type"] = "null"
+                kind["description"] = "Null"
             case _:
                 # Check if the kind is a user defined kind
-                if data.get("name") in self.access_user_defined_kinds():
+                if data.get("name") in self._view_user_defined_kinds():
                     kind["$ref"] = "#/$defs/{}".format(data["name"])
                 else:
                     self.log.error("Invalid kind (%s), defaulting to Null", data)
+                    kind["description"] = f"Invalid kind ({data}), defaulting to Null"
                     kind["type"] = "null"
         return kind

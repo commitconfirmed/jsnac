@@ -8,11 +8,11 @@ JSON Schema (for) Network as Code
 
 The majority of Network and Infrastructure automation is done in YAML. Be it Ansible Host Variables, Network Device data to build a Jinja2 configuration with, or just a collection of data you want to run a script against to put into another product you have likely written a YAML file and have had to debug a typo or had to help another colleague build a new file for a new device.
 
-In an ideal world you can (and should) put a lot of this data into a database or Network Source of Truth solution and pull from it so the validation is done for you. However, these solutions don't cover every case and generally don't play nice with a GIT CI/CD process so you still will likely end up creating some YAML files here and there.
+In an ideal world you can (and should) put a lot of this data into a database or Network Source of Truth solution and pull from it so the validation is done for you. However, these solutions don't cover every use case so you will likely end up creating some YAML files here and there.
 
-Using a JSON schema for validating your YAML is a good practice in a CI/CD world but is very cumbersome to create from scratch.
+Using a JSON schema for validating & documenting your YAML is a good practice in a CI/CD world but is very cumbersome to create from scratch.
 
-This project aims to simplify this whole process to help you build a decent JSON schema base from a YAML file with network and infrastructure data definitions in mind. 
+This project aims to simplify this whole process by helping you build a JSON schema using YAML syntax that has network and infrastructure templates (or sub-schemas) in mind.
 
 Now you can hopefully catch those rare mistakes before you run that Playbook, create that configuration with a Jinja2 template or run a REST query to that Source of Truth or Telemetry solution :)
 
@@ -24,7 +24,7 @@ Take a basic Ansible host_vars YAML file for a host below:
 chassis:
   hostname: "ceos-spine1"
   model: "ceos"
-  type: "router"
+  device_type: "router"
 
 system:
   domain_name: "example.com"
@@ -40,55 +40,128 @@ interfaces:
     ipv4: "10.1.0.20/24"
 ```
 
-You can simply write out how you would like to validate this data, and this program will write out a JSON schema you can use. You can just also keep your existing data if you just want some basic type validation (string, integer, float, array, etc.).
+You can simply write out how you would like to document & validate this data in YAML using kinds, and this program will write out a JSON schema you can use. 
 
 ```yaml
-chassis:
+header:
+  title: "Ansible host vars"
+
+schema:
+  chassis:
+    title: "Chassis"
+    type: "object"
+    properties:
+      hostname:
+        kind: { name: "string" }
+      model:
+        kind: { name: "string" }
+      device_type:
+        kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
+  system:
+    type: "object"
+    properties:
+      domain_name:
+        kind: { name: "string" }
+      ntp_servers:
+        type: "array"
+        items:
+          kind: { name: "ipv4" } 
+  interfaces:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        if:
+          kind: { name: "string" }
+        desc:
+          kind: { name: "string" }
+        ipv4:
+          kind: { name: "ipv4_cidr" }
+        ipv6:
+          kind: { name: "ipv6_cidr" }
+```
+
+We also have full support for writing your own titles, descriptions, kinds (sub-schemas), objects that are required, etc. A more fleshed out example of the same schema is below:
+
+```yaml
+header:
+  id: "example-schema.json"
+  title: "Ansible host vars"
+  description: |
+    Ansible host vars for my networking device. Requires the below objects:
+    - chassis
+    - system
+    - interfaces
+
+kinds:
   hostname:
-    jsnac_type: pattern
-    jsnac_pattern: "^ceos-[a-zA-Z]{1,16}[0-9]$"
-  model: "ceos"
-  type:
-    jsnac_type: choice
-    jsnac_choices: ["router", "switch", "spine", "leaf"]
+    title: "Hostname"
+    description: "Hostname of the device"
+    type: "pattern"
+    regex: "^[a-zA-Z0-9-]{1,63}$"
 
-system:
-  domain_name: 
-    jsnac_type: domain
-  ntp_servers:
-    jsnac_type: ipv4
-  
-interfaces:
-  - if:
-      jsnac_type: string
-    desc: 
-      jsnac_type: string
-    ipv4: 
-      jsnac_type: ipv4_cidr
-    ipv6:
-      jsnac_type: ipv6_cidr
+schema:
+  chassis:
+    title: "Chassis"
+    description: | 
+      Object containing Chassis information. Has the below properties: 
+      hostname [required]: hostname
+      model [required]: string
+      device_type [required]: choice (router, switch, firewall, load-balancer)
+    type: "object"
+    properties:
+      hostname:
+        kind: { name: "hostname" }
+      model:
+        kind: { name: "string" }
+      device_type:
+        title: "Device Type"
+        description: |
+          Device Type options are:
+          router, switch, firewall, load-balancer
+        kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
+    required: [ "hostname", "model", "device_type" ]
+  system:
+    title: "System"
+    description: |
+      Object containing System information. Has the below properties:
+      domain_name [required]: string
+      ntp_servers [required]: list of ipv4 addresses
+    type: "object"
+    properties:
+      domain_name:
+        kind: { name: "string" }
+      ntp_servers:
+        title: "NTP Servers"
+        description: "List of NTP servers"
+        type: "array"
+        items:
+          kind: { name: "ipv4" } 
+    required: [ "domain_name", "ntp_servers" ]
+  interfaces:
+    title: "Device Interfaces"
+    description: |
+      List of device interfaces. Each interface has the below properties:
+      if [required]: string
+      desc: string
+      ipv4: ipv4_cidr
+      ipv6: ipv6_cidr
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        if:
+          kind: { name: "string" }
+        desc:
+          kind: { name: "string" }
+        ipv4:
+          kind: { name: "ipv4_cidr" }
+        ipv6:
+          kind: { name: "ipv6_cidr" }
+      required: [ "if" ]
 ```
 
-Alternatively, you can also just use dictionaries inplace:
-
-```yaml
-chassis:
-  hostname: { jsnac_type: pattern, jsnac_pattern: "^ceos-[a-zA-Z]{1,16}[0-9]$" }
-  model: "ceos"
-  type: { jsnac_type: choice, jsnac_choices: ["router", "switch", "spine", "leaf"] }
-
-system:
-  domain_name: { jsnac_type: domain }
-  ntp_servers: { jsnac_type: ipv4 }
-  
-interfaces:
-  - if: { jsnac_type: string }
-    desc: { jsnac_type: string }
-    ipv4: { jsnac_type: ipv4_cidr }
-    ipv6: { jsnac_type: ipv6_cidr }
-```
-
-A full list of jsnac_types is available in the documentation (readthedocs coming soon)
+A full list of kinds are available in the ![documentation](https://jsnac.readthedocs.io/en/latest/)
 
 ## Usage
 
@@ -104,7 +177,7 @@ jsnac -f data/example-jsnac.yml
 # Build a JSON schema from a YAML file and save it to a custom file
 jsnac -f data/example-jsnac.yml -o my.schema.json
 
-# Increase the verbosity of the output
+# Increase the verbosity of the output (this generates alot of messages as I use it for debugging)
 jsnac -f data/example-jsnac.yml -v
 ```
 
@@ -129,7 +202,7 @@ def main():
     # jsnac.add_json(json_data)
 
     # Build the JSON schema
-    schema = jsnac.build()
+    schema = jsnac.build_schema()
     print(schema)
 
 if __name__ == '__main__':

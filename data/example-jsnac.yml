@@ -2,8 +2,12 @@
 header:
   id: "example-schema.json"
   schema: "http://json-schema.org/draft-07/schema"
-  title: "JSNAC Created Schema"
-  description: "The below schema was created by JSNAC (https://github.com/commitconfirmed/jsnac)"
+  title: "Example Schema"
+  description: |
+    Ansible host vars for my networking device. Requires the below objects:
+    - chassis
+    - system
+    - interfaces
 
 kinds:
   hostname:
@@ -15,7 +19,11 @@ kinds:
 schema:
   chassis:
     title: "Chassis"
-    description: "Chassis information"
+    description: | 
+      Object containing Chassis information. Has the below properties: 
+      hostname [required]: hostname
+      model [required]: string
+      device_type [required]: choice (router, switch, firewall, load-balancer)
     type: "object"
     properties:
       hostname:
@@ -23,13 +31,18 @@ schema:
       model:
         kind: { name: "string" }
       device_type:
-        title: "Type"
-        description: "Type of the device"
+        title: "Device Type"
+        description: |
+          Device Type options are:
+          router, switch, firewall, load-balancer
         kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
-    required: [ "hostname", "model", "type" ]
+    required: [ "hostname", "model", "device_type" ]
   system:
     title: "System"
-    description: "System information"
+    description: |
+      Object containing System information. Has the below properties:
+      domain_name [required]: string
+      ntp_servers [required]: list of ipv4 addresses
     type: "object"
     properties:
       domain_name:
@@ -42,7 +55,13 @@ schema:
           kind: { name: "ipv4" } 
     required: [ "domain_name", "ntp_servers" ]
   interfaces:
-    title: "Interfaces"
+    title: "Device Interfaces"
+    description: |
+      List of device interfaces. Each interface has the below properties:
+      if [required]: string
+      desc: string
+      ipv4: ipv4_cidr
+      ipv6: ipv6_cidr
     type: "array"
     items:
       type: "object"

@@ -2,8 +2,8 @@
     "header": {
         "id": "example-schema.json",
         "schema": "http://json-schema.org/draft-07/schema",
-        "title": "JSNAC Created Schema",
-        "description": "The below schema was created by JSNAC (https://github.com/commitconfirmed/jsnac)"
+        "title": "Example Schema",
+        "description": "Ansible host vars for my networking device. Requires the below objects:\n- chassis\n- system\n- interfaces\n"
     },
     "kinds": {
         "hostname": {
@@ -16,7 +16,7 @@
     "schema": {
         "chassis": {
             "title": "Chassis",
-            "description": "Chassis information",
+            "description": "Object containing Chassis information. Has the below properties: \nhostname [required]: hostname\nmodel [required]: string\ndevice_type [required]: choice (router, switch, firewall, load-balancer)\n",
             "type": "object",
             "properties": {
                 "hostname": {
@@ -30,8 +30,8 @@
                     }
                 },
                 "device_type": {
-                    "title": "Type",
-                    "description": "Type of the device",
+                    "title": "Device Type",
+                    "description": "Device Type options are:\nrouter, switch, firewall, load-balancer\n",
                     "kind": {
                         "name": "choice",
                         "choices": [
@@ -46,12 +46,12 @@
             "required": [
                 "hostname",
                 "model",
-                "type"
+                "device_type"
             ]
         },
         "system": {
             "title": "System",
-            "description": "System information",
+            "description": "Object containing System information. Has the below properties:\ndomain_name [required]: string\nntp_servers [required]: list of ipv4 addresses\n",
             "type": "object",
             "properties": {
                 "domain_name": {
@@ -76,7 +76,8 @@
             ]
         },
         "interfaces": {
-            "title": "Interfaces",
+            "title": "Device Interfaces",
+            "description": "List of device interfaces. Each interface has the below properties:\nif [required]: string\ndesc: string\nipv4: ipv4_cidr\nipv6: ipv6_cidr\n",
             "type": "array",
             "items": {
                 "type": "object",
