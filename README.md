@@ -1,8 +1,15 @@
-[![Documentation Status](https://readthedocs.org/projects/jsnac/badge/?version=latest)](https://jsnac.readthedocs.io/en/latest/?badge=latest) 
 ![Build Status](https://github.com/commitconfirmed/jsnac/workflows/JSNAC%20TOX%20Suite/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/jsnac/badge/?version=latest)](https://jsnac.readthedocs.io/en/latest/?badge=latest) 
+
 
 # JSNAC
-JSON Schema (for) Network as Code 
+JSON Schema (for) Network Automation Creator 
+
+- [Overview](#overview)
+- [Brief Example](#brief-example)
+- [YAML Validation](#yaml-validation)
+- [Detailed Example](#detailed-example)
+- [Usage](#usage)
 
 ## Overview
 
@@ -80,6 +87,30 @@ schema:
         ipv6:
           kind: { name: "ipv6_cidr" }
 ```
+
+```bash
+(.venv) user@server:~/jsnac$ jsnac -f data/example-jsnac.yml 
+[INFO] - jsnac - Starting JSNAC CLI
+[INFO] - jsnac - Schema built in 0.0006 seconds
+[INFO] - jsnac - Schema written to: jsnac.schema.json
+[INFO] - jsnac - JSNAC CLI complete
+```
+
+## YAML Validation
+
+To be able to validate the orginal YAML file or any new YAML file you create using this schema you first need to reference your JSON schema using the yaml-language-server comment at the top of your YAML file
+
+```yaml
+# yaml-language-server: $schema=jsnac.schema.json
+---
+chassis:
+  hostname: "hostname"
+```
+
+Which language server you use is specific to your environment and editor that you use. For Visual Studio Code I recommend that you use the [Red Hat YAML Language Server](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension. Once installed you will now see that you will have automatic code completion, syntax highlighting, schema validation etc. while editing your YAML file.
+
+
+## Detailed Example
 
 We also have full support for writing your own titles, descriptions, kinds (sub-schemas), objects that are required, etc. A more fleshed out example of the same schema is below:
 
@@ -161,7 +192,7 @@ schema:
       required: [ "if" ]
 ```
 
-A full list of kinds are available in the ![documentation](https://jsnac.readthedocs.io/en/latest/)
+A full list of kinds are available in the [documentation](https://jsnac.readthedocs.io/en/latest/)
 
 ## Usage
 
