@@ -7,9 +7,9 @@ from typing import ClassVar
 import yaml
 
 
-class SchemaInferer:
+class SchemaBuilder:
     """
-    SchemaInferer is a class that infers JSON schemas from provided JSON or YAML data.
+    SchemaBuilder is a class that infers JSON schemas from provided JSON or YAML data.
 
         user_defined_kinds (dict): A class variable that stores user-defined kinds.
 
@@ -123,7 +123,7 @@ class SchemaInferer:
 
     def build_schema(self) -> str:
         """
-        Builds a JSON schema based on the data added to the schema inferer.
+        Builds a JSON schema based on the data added to the schema builder.
         This method constructs a JSON schema using the data previously added via
         `add_json` or `add_yaml` methods. It supports JSON Schema draft-07 by default,
         but can be configured to use other drafts if needed.
@@ -137,7 +137,7 @@ class SchemaInferer:
         Notes:
             - The schema's metadata (e.g., $schema, title, $id, description) is derived
               from the "header" section of the provided data.
-            - Additional sub-schemas (definitions) can be added via the "kinds" section
+            - Additional sub-schemas (definitions) can be added via the "js_kinds" section
               of the provided data.
             - The schemas for individual and nested properties are constructed
               based on the "schema" section of the provided data.
@@ -158,7 +158,7 @@ class SchemaInferer:
             "title": data.get("header", {}).get("title", "JSNAC created Schema"),
             "$id": data.get("header", {}).get("id", "jsnac.schema.json"),
             "description": data.get("header", {}).get("description", "https://github.com/commitconfirmed/jsnac"),
-            "$defs": self._build_definitions(data.get("kinds", {})),
+            "$defs": self._build_definitions(data.get("js_kinds", {})),
             "type": data.get("type", "object"),
             "additionalProperties": data.get("additionalProperties", False),
             "properties": self._build_properties(data.get("schema", {})),
@@ -167,14 +167,14 @@ class SchemaInferer:
 
     def _build_definitions(self, data: dict) -> dict:
         """
-        Build a dictionary of definitions based on predefined types and additional kinds provided in the input data.
+        Build a dictionary of definitions based on predefined types and additional js_kinds provided in the input data.
 
         Args:
-            data (dict): A dictionary containing additional kinds to be added to the definitions.
+            data (dict): A dictionary containing additional js_kinds to be added to the definitions.
 
         Returns:
             dict: A dictionary containing definitions for our predefined types such as 'ipv4', 'ipv6', etc.
-                  Additional kinds from the input data are also included.
+                  Additional js_kinds from the input data are also included.
 
         Raises:
             None
@@ -228,9 +228,9 @@ class SchemaInferer:
                 "description": "Domain name (String) \n Format: example.com",
             },
         }
-        # Check passed data for additional kinds and add them to the definitions
+        # Check passed data for additional js_kinds and add them to the definitions
         for kind, kind_data in data.items():
-            self.log.debug("Building custom kind (%s): \n%s ", kind, json.dumps(kind_data, indent=4))
+            self.log.debug("Building custom js_kind (%s): \n%s ", kind, json.dumps(kind_data, indent=4))
             definitions[kind] = {}
             definitions[kind]["title"] = kind_data.get("title", f"{kind}")
             definitions[kind]["description"] = kind_data.get("description", f"Custom Kind: {kind}")
@@ -242,12 +242,14 @@ class SchemaInferer:
                         definitions[kind]["pattern"] = kind_data["regex"]
                         self._add_user_defined_kinds({kind: True})
                     else:
-                        self.log.error("regex key is required for kind (%s) with type pattern", kind)
+                        self.log.error("regex key is required for js_kind (%s) with type pattern", kind)
                         definitions[kind]["type"] = "null"
                         definitions[kind]["title"] = "Error"
                         definitions[kind]["description"] = "No regex key provided"
                 case _:
-                    self.log.error("Invalid type (%s) for kind (%s), defaulting to string", kind_data.get("type"), kind)
+                    self.log.error(
+                        "Invalid type (%s) for js_kind (%s), defaulting to string", kind_data.get("type"), kind
+                    )
                     definitions[kind]["type"] = "string"
         self.log.debug("Returned Definitions: \n%s ", json.dumps(definitions, indent=4))
         return definitions
@@ -286,8 +288,8 @@ class SchemaInferer:
             property_dict["description"] = obj_data["description"]
         if "type" in obj_data:
             property_dict.update(self._build_property_type(obj, obj_data))
-        elif "kind" in obj_data:
-            property_dict.update(self._build_kinds(obj, obj_data["kind"]))
+        elif "js_kind" in obj_data:
+            property_dict.update(self._build_kinds(obj, obj_data["js_kind"]))
 
         if "required" in obj_data:
             property_dict["required"] = obj_data["required"]
@@ -320,10 +322,10 @@ class SchemaInferer:
                     array_items["items"]["properties"] = {}
                 if "required" in item_data:
                     array_items["items"]["required"] = item_data["required"]
-            elif "kind" in item_data:
-                array_items["items"] = self._build_kinds(obj, item_data["kind"])
+            elif "js_kind" in item_data:
+                array_items["items"] = self._build_kinds(obj, item_data["js_kind"])
             else:
-                self.log.error("Array items require a type or kind key")
+                self.log.error("Array items require a type or js_kind key")
                 array_items["items"] = {"type": "null"}
         else:
             self.log.error("Array type requires an items key")
@@ -332,7 +334,7 @@ class SchemaInferer:
         return array_items
 
     def _build_kinds(self, obj: str, data: dict) -> dict:  # noqa: C901 PLR0912
-        self.log.debug("Building kinds for Object (%s): \n%s ", obj, json.dumps(data, indent=4))
+        self.log.debug("Building js_kinds for Object (%s): \n%s ", obj, json.dumps(data, indent=4))
         kind: dict = {}
         # Check if the kind has a type, if so we will continue to dig depper until kinds are found
         # I should update this to be ruff compliant, but it makes sense to me at the moment
@@ -357,8 +359,8 @@ class SchemaInferer:
                 if "choices" in data:
                     kind["enum"] = data["choices"]
                 else:
-                    self.log.error("Choice kind requires a choices object")
-                    kind["description"] = "Choice kind requires a choices object"
+                    self.log.error("Choice js_kind requires a choices object")
+                    kind["description"] = "Choice js_kind requires a choices object"
                     kind["type"] = "null"
             # Default types
             case "string":
@@ -375,11 +377,11 @@ class SchemaInferer:
                 kind["type"] = "null"
                 kind["description"] = "Null"
             case _:
-                # Check if the kind is a user defined kind
+                # Check if the kind is user-defined from the user_defined_kinds class variable
                 if data.get("name") in self._view_user_defined_kinds():
                     kind["$ref"] = "#/$defs/{}".format(data["name"])
                 else:
-                    self.log.error("Invalid kind (%s), defaulting to Null", data)
-                    kind["description"] = f"Invalid kind ({data}), defaulting to Null"
+                    self.log.error("Invalid js_kind (%s), defaulting to Null", data)
+                    kind["description"] = f"Invalid js_kind ({data}), defaulting to Null"
                     kind["type"] = "null"
         return kind

@@ -25,7 +25,7 @@ from pathlib import Path
 
 import yaml
 
-from jsnac.core.infer import SchemaInferer
+from jsnac.core.build import SchemaBuilder
 
 
 def write_json(file: str) -> None:  # noqa: D103
@@ -55,7 +55,7 @@ def main() -> None:  # noqa: D103
     write_json(example_jsnac_file)
     # Generate a schema for example-jsnac.yml
     with example_jsnac_file.open() as f:
-        jsnac = SchemaInferer()
+        jsnac = SchemaBuilder()
         jsnac.add_yaml(f.read())
         schema = jsnac.build_schema()
         f.close()

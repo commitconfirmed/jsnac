@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json
 
-from jsnac.core.infer import SchemaInferer
+from jsnac.core.build import SchemaBuilder
 
 
 # Test that custom headers can be set
@@ -14,7 +14,7 @@ def test_custom_headers() -> None:
             "description": "Test Description",
         }
     }
-    jsnac = SchemaInferer()
+    jsnac = SchemaBuilder()
     jsnac.add_json(json.dumps(data))
     schema = json.loads(jsnac.build_schema())
     assert schema["$schema"] == "http://json-schema.org/draft/2020-12/schema"
@@ -26,7 +26,7 @@ def test_custom_headers() -> None:
 # Test that default headers are set
 def test_default_headers() -> None:
     data = {"header": {}}
-    jsnac = SchemaInferer()
+    jsnac = SchemaBuilder()
     jsnac.add_json(json.dumps(data))
     schema = json.loads(jsnac.build_schema())
     assert schema["$schema"] == "http://json-schema.org/draft-07/schema#"

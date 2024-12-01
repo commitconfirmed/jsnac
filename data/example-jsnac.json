@@ -5,7 +5,7 @@
         "title": "Example Schema",
         "description": "Ansible host vars for my networking device. Requires the below objects:\n- chassis\n- system\n- interfaces\n"
     },
-    "kinds": {
+    "js_kinds": {
         "hostname": {
             "title": "Hostname",
             "description": "Hostname of the device",
@@ -20,19 +20,19 @@
             "type": "object",
             "properties": {
                 "hostname": {
-                    "kind": {
+                    "js_kind": {
                         "name": "hostname"
                     }
                 },
                 "model": {
-                    "kind": {
+                    "js_kind": {
                         "name": "string"
                     }
                 },
                 "device_type": {
                     "title": "Device Type",
                     "description": "Device Type options are:\nrouter, switch, firewall, load-balancer\n",
-                    "kind": {
+                    "js_kind": {
                         "name": "choice",
                         "choices": [
                             "router",
@@ -55,7 +55,7 @@
             "type": "object",
             "properties": {
                 "domain_name": {
-                    "kind": {
+                    "js_kind": {
                         "name": "string"
                     }
                 },
@@ -64,7 +64,7 @@
                     "description": "List of NTP servers",
                     "type": "array",
                     "items": {
-                        "kind": {
+                        "js_kind": {
                             "name": "ipv4"
                         }
                     }
@@ -83,22 +83,22 @@
                 "type": "object",
                 "properties": {
                     "if": {
-                        "kind": {
+                        "js_kind": {
                             "name": "string"
                         }
                     },
                     "desc": {
-                        "kind": {
+                        "js_kind": {
                             "name": "string"
                         }
                     },
                     "ipv4": {
-                        "kind": {
+                        "js_kind": {
                             "name": "ipv4_cidr"
                         }
                     },
                     "ipv6": {
-                        "kind": {
+                        "js_kind": {
                             "name": "ipv6_cidr"
                         }
                     }

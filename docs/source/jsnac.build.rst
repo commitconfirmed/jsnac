@@ -1,10 +1,10 @@
 jsnac.core package
 ==================
 
-jsnac.core.infer module
+jsnac.core.build module
 -----------------------
 
-.. automodule:: jsnac.core.infer
+.. automodule:: jsnac.core.build
    :members:
    :undoc-members:
    :show-inheritance:

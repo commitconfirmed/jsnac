@@ -49,35 +49,35 @@ You can simply write out how you would like to validate this data, and this prog
         type: "object"
         properties:
           hostname:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           model:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           device_type:
-            kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
+            js_kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
       system:
         type: "object"
         properties:
           domain_name:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           ntp_servers:
             type: "array"
             items:
-              kind: { name: "ipv4" } 
+              js_kind: { name: "ipv4" } 
       interfaces:
         type: "array"
         items:
           type: "object"
           properties:
             if:
-              kind: { name: "string" }
+              js_kind: { name: "string" }
             desc:
-              kind: { name: "string" }
+              js_kind: { name: "string" }
             ipv4:
-              kind: { name: "ipv4_cidr" }
+              js_kind: { name: "ipv4_cidr" }
             ipv6:
-              kind: { name: "ipv6_cidr" }
+              js_kind: { name: "ipv6_cidr" }
 
-We also have full support for writing your own titles, descriptions, kinds (sub-schemas), objects that are required, etc. A more fleshed out example of the same schema is below:
+We also have full support for writing your own titles, descriptions, js_kinds (sub-schemas), objects that are required, etc. A more fleshed out example of the same schema is below:
 
 .. code-block:: yaml
 
@@ -90,7 +90,7 @@ We also have full support for writing your own titles, descriptions, kinds (sub-
         - system
         - interfaces
     
-    kinds:
+    js_kinds:
       hostname:
         title: "Hostname"
         description: "Hostname of the device"
@@ -108,15 +108,15 @@ We also have full support for writing your own titles, descriptions, kinds (sub-
         type: "object"
         properties:
           hostname:
-            kind: { name: "hostname" }
+            js_kind: { name: "hostname" }
           model:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           device_type:
             title: "Device Type"
             description: |
               Device Type options are:
               router, switch, firewall, load-balancer
-            kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
+            js_kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
         required: [ "hostname", "model", "device_type" ]
       system:
         title: "System"
@@ -127,13 +127,13 @@ We also have full support for writing your own titles, descriptions, kinds (sub-
         type: "object"
         properties:
           domain_name:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           ntp_servers:
             title: "NTP Servers"
             description: "List of NTP servers"
             type: "array"
             items:
-              kind: { name: "ipv4" } 
+              js_kind: { name: "ipv4" } 
         required: [ "domain_name", "ntp_servers" ]
       interfaces:
         title: "Device Interfaces"
@@ -148,13 +148,13 @@ We also have full support for writing your own titles, descriptions, kinds (sub-
           type: "object"
           properties:
             if:
-              kind: { name: "string" }
+              js_kind: { name: "string" }
             desc:
-              kind: { name: "string" }
+              js_kind: { name: "string" }
             ipv4:
-              kind: { name: "ipv4_cidr" }
+              js_kind: { name: "ipv4_cidr" }
             ipv6:
-              kind: { name: "ipv6_cidr" }
+              js_kind: { name: "ipv6_cidr" }
           required: [ "if" ]
 
 Motivation

@@ -25,7 +25,7 @@ import time
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
-from jsnac import SchemaInferer, __version__
+from jsnac import SchemaBuilder, __version__
 
 
 def _setup_logging() -> logging.Logger:
@@ -107,7 +107,7 @@ def main(args: str | None = None) -> None:
     Main function for the JSNAC CLI.
 
     This function parses command-line arguments, sets up logging, and processes
-    an input file (either JSON or YAML) to infer a schema using the SchemaInferer
+    an input file (either JSON or YAML) to infer a schema using the SchemaBuilder
     class. The inferred schema is then written to an output file.
 
     Args:
@@ -125,7 +125,7 @@ def main(args: str | None = None) -> None:
     # File is required but checking anyway
     if flags.file:
         input_file = Path(flags.file)
-        jsnac = SchemaInferer()
+        jsnac = SchemaBuilder()
         if flags.json:
             log.debug("Using JSON file: %s", flags.file)
             with input_file.open() as f:
