@@ -24,11 +24,11 @@ schema:
       hostname [required]: hostname
       model [required]: string
       device_type [required]: choice (router, switch, firewall, load-balancer)
-    type: "object"
     properties:
       hostname:
         js_kind: { name: "hostname" }
       model:
+        description: "Model of the device"
         js_kind: { name: "string" }
       device_type:
         title: "Device Type"
@@ -43,16 +43,14 @@ schema:
       Object containing System information. Has the below properties:
       domain_name [required]: string
       ntp_servers [required]: list of ipv4 addresses
-    type: "object"
     properties:
       domain_name:
         js_kind: { name: "string" }
       ntp_servers:
         title: "NTP Servers"
         description: "List of NTP servers"
-        type: "array"
         items:
-          js_kind: { name: "ipv4" } 
+          js_kind: { name: "ipv4" }
     required: [ "domain_name", "ntp_servers" ]
   interfaces:
     title: "Device Interfaces"
@@ -62,9 +60,7 @@ schema:
       desc: string
       ipv4: ipv4_cidr
       ipv6: ipv6_cidr
-    type: "array"
     items:
-      type: "object"
       properties:
         if:
           js_kind: { name: "string" }

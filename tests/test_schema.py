@@ -196,3 +196,37 @@ def test_invalid_domains(domain) -> None:
     domain_definitions = test_json_schema["$defs"]["domain"]
     with pytest.raises(jsonschema.exceptions.ValidationError):
         jsonschema.validate(domain, domain_definitions)
+
+
+# Test the JSON schema with valid http and https URLs
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://example.com",
+        "https://example.com/",
+        "http://example.com/test",
+        "https://example.com/test/",
+        "http://example.com/test.html?query=1",
+        "https://example.com/test.js?query=1&query2=2",
+    ],
+)
+def test_valid_http_urls(url) -> None:
+    http_url_definitions = test_json_schema["$defs"]["http_url"]
+    jsonschema.validate(url, http_url_definitions)
+    assert True
+
+
+# Test the JSON schema with some invalid http and https URLs, make sure they raise a ValidationError
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://example",
+        "https://example",
+        "htttp://example.com",
+        "httpss://example.com",
+    ],
+)
+def test_invalid_http_urls(url) -> None:
+    http_url_definitions = test_json_schema["$defs"]["http_url"]
+    with pytest.raises(jsonschema.exceptions.ValidationError):
+        jsonschema.validate(url, http_url_definitions)

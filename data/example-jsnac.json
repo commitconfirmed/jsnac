@@ -17,7 +17,6 @@
         "chassis": {
             "title": "Chassis",
             "description": "Object containing Chassis information. Has the below properties: \nhostname [required]: hostname\nmodel [required]: string\ndevice_type [required]: choice (router, switch, firewall, load-balancer)\n",
-            "type": "object",
             "properties": {
                 "hostname": {
                     "js_kind": {
@@ -25,6 +24,7 @@
                     }
                 },
                 "model": {
+                    "description": "Model of the device",
                     "js_kind": {
                         "name": "string"
                     }
@@ -52,7 +52,6 @@
         "system": {
             "title": "System",
             "description": "Object containing System information. Has the below properties:\ndomain_name [required]: string\nntp_servers [required]: list of ipv4 addresses\n",
-            "type": "object",
             "properties": {
                 "domain_name": {
                     "js_kind": {
@@ -62,7 +61,6 @@
                 "ntp_servers": {
                     "title": "NTP Servers",
                     "description": "List of NTP servers",
-                    "type": "array",
                     "items": {
                         "js_kind": {
                             "name": "ipv4"
@@ -78,9 +76,7 @@
         "interfaces": {
             "title": "Device Interfaces",
             "description": "List of device interfaces. Each interface has the below properties:\nif [required]: string\ndesc: string\nipv4: ipv4_cidr\nipv6: ipv6_cidr\n",
-            "type": "array",
             "items": {
-                "type": "object",
                 "properties": {
                     "if": {
                         "js_kind": {

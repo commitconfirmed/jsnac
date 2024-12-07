@@ -50,3 +50,11 @@ def test_cli_file_json(capsys) -> None:
         main(["-f", "data/example-jsnac.json", "-j"])
     output = capsys.readouterr()
     assert "JSNAC CLI complete" in output.err
+
+
+# Test CLI with verbose argument
+def test_cli_verbose(capsys) -> None:
+    with pytest.raises(SystemExit):
+        main(["-f", "data/example.yml", "-v"])
+    output = capsys.readouterr()
+    assert "JSNAC CLI complete" in output.err
