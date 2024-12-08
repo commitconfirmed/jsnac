@@ -21,7 +21,7 @@ Take a basic Ansible host_vars YAML file for a host below:
     chassis:
         hostname: "ceos-spine1"
         model: "ceos"
-        type: "router"
+        device_type: "router"
     
     system:
         domain_name: "example.com"
@@ -46,7 +46,6 @@ You can simply write out how you would like to validate this data, and this prog
     schema:
       chassis:
         title: "Chassis"
-        type: "object"
         properties:
           hostname:
             js_kind: { name: "string" }
@@ -55,18 +54,14 @@ You can simply write out how you would like to validate this data, and this prog
           device_type:
             js_kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
       system:
-        type: "object"
         properties:
           domain_name:
             js_kind: { name: "string" }
           ntp_servers:
-            type: "array"
             items:
               js_kind: { name: "ipv4" } 
       interfaces:
-        type: "array"
         items:
-          type: "object"
           properties:
             if:
               js_kind: { name: "string" }
@@ -105,7 +100,6 @@ We also have full support for writing your own titles, descriptions, js_kinds (s
           hostname [required]: hostname
           model [required]: string
           device_type [required]: choice (router, switch, firewall, load-balancer)
-        type: "object"
         properties:
           hostname:
             js_kind: { name: "hostname" }
@@ -124,14 +118,12 @@ We also have full support for writing your own titles, descriptions, js_kinds (s
           Object containing System information. Has the below properties:
           domain_name [required]: string
           ntp_servers [required]: list of ipv4 addresses
-        type: "object"
         properties:
           domain_name:
             js_kind: { name: "string" }
           ntp_servers:
             title: "NTP Servers"
             description: "List of NTP servers"
-            type: "array"
             items:
               js_kind: { name: "ipv4" } 
         required: [ "domain_name", "ntp_servers" ]
@@ -143,9 +135,7 @@ We also have full support for writing your own titles, descriptions, js_kinds (s
           desc: string
           ipv4: ipv4_cidr
           ipv6: ipv6_cidr
-        type: "array"
         items:
-          type: "object"
           properties:
             if:
               js_kind: { name: "string" }

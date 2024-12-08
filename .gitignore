@@ -19,3 +19,6 @@ docs/build/
 
 # JSNAC default output file
 jsnac.schema.json
+
+# Release notes
+release.txt
