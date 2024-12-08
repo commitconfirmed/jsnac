@@ -27,14 +27,15 @@ Library usage:
 .. code-block:: python
 
     """
-    This example demonstrates how to use the jsnac library to build a JSON schema from a YAML file in a Python script.
-    Example yml file is available here: <https://www.github.com/commitconfirmed/jsnac/blob/main/data/example-jsnac.yml>
+    This example demonstrates how to use the jsnac library to build a JSON schema 
+    from a YAML file in a Python script. An example YAML file is available below:
+    <https://www.github.com/commitconfirmed/jsnac/blob/main/data/example-jsnac.yml>
     """
-    from jsnac.core.infer import SchemaInferer
+    from jsnac.core.build import SchemaBuilder
 
     def main():
         # Create a SchemaInferer object
-        jsnac = SchemaInferer()
+        jsnac = SchemaBuilder()
 
         # Load the YAML data however you like into the SchemaInferer object
         with open('data/example-jsnac.yml', 'r') as file:

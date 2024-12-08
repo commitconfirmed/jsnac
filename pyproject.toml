@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "jsnac"
-version = "0.2.0"
+version = "0.2.1"
 description = "JSON Schema (for) Network as Code: Build JSON schemas from YAML"
 authors = ["Andrew Jones <jsnac@commitconfirmed.com>"]
 license = "MIT"
@@ -14,6 +14,7 @@ classifiers = [
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
 ]
 
 [tool.poetry.dependencies]

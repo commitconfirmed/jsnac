@@ -1,5 +1,5 @@
 # Will use this argument eventually to specify the python version so we can test against multiple versions
-ARG PYTHON=3.11
+ARG PYTHON=3.13
 FROM python:${PYTHON}-slim-bookworm
 
 ENV PATH="/root/.local/bin:$PATH" \

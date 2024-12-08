@@ -21,7 +21,7 @@ Take a basic Ansible host_vars YAML file for a host below:
     chassis:
         hostname: "ceos-spine1"
         model: "ceos"
-        type: "router"
+        device_type: "router"
     
     system:
         domain_name: "example.com"
@@ -46,38 +46,33 @@ You can simply write out how you would like to validate this data, and this prog
     schema:
       chassis:
         title: "Chassis"
-        type: "object"
         properties:
           hostname:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           model:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           device_type:
-            kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
+            js_kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
       system:
-        type: "object"
         properties:
           domain_name:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           ntp_servers:
-            type: "array"
             items:
-              kind: { name: "ipv4" } 
+              js_kind: { name: "ipv4" } 
       interfaces:
-        type: "array"
         items:
-          type: "object"
           properties:
             if:
-              kind: { name: "string" }
+              js_kind: { name: "string" }
             desc:
-              kind: { name: "string" }
+              js_kind: { name: "string" }
             ipv4:
-              kind: { name: "ipv4_cidr" }
+              js_kind: { name: "ipv4_cidr" }
             ipv6:
-              kind: { name: "ipv6_cidr" }
+              js_kind: { name: "ipv6_cidr" }
 
-We also have full support for writing your own titles, descriptions, kinds (sub-schemas), objects that are required, etc. A more fleshed out example of the same schema is below:
+We also have full support for writing your own titles, descriptions, js_kinds (sub-schemas), objects that are required, etc. A more fleshed out example of the same schema is below:
 
 .. code-block:: yaml
 
@@ -90,7 +85,7 @@ We also have full support for writing your own titles, descriptions, kinds (sub-
         - system
         - interfaces
     
-    kinds:
+    js_kinds:
       hostname:
         title: "Hostname"
         description: "Hostname of the device"
@@ -105,18 +100,17 @@ We also have full support for writing your own titles, descriptions, kinds (sub-
           hostname [required]: hostname
           model [required]: string
           device_type [required]: choice (router, switch, firewall, load-balancer)
-        type: "object"
         properties:
           hostname:
-            kind: { name: "hostname" }
+            js_kind: { name: "hostname" }
           model:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           device_type:
             title: "Device Type"
             description: |
               Device Type options are:
               router, switch, firewall, load-balancer
-            kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
+            js_kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
         required: [ "hostname", "model", "device_type" ]
       system:
         title: "System"
@@ -124,16 +118,14 @@ We also have full support for writing your own titles, descriptions, kinds (sub-
           Object containing System information. Has the below properties:
           domain_name [required]: string
           ntp_servers [required]: list of ipv4 addresses
-        type: "object"
         properties:
           domain_name:
-            kind: { name: "string" }
+            js_kind: { name: "string" }
           ntp_servers:
             title: "NTP Servers"
             description: "List of NTP servers"
-            type: "array"
             items:
-              kind: { name: "ipv4" } 
+              js_kind: { name: "ipv4" } 
         required: [ "domain_name", "ntp_servers" ]
       interfaces:
         title: "Device Interfaces"
@@ -143,18 +135,16 @@ We also have full support for writing your own titles, descriptions, kinds (sub-
           desc: string
           ipv4: ipv4_cidr
           ipv6: ipv6_cidr
-        type: "array"
         items:
-          type: "object"
           properties:
             if:
-              kind: { name: "string" }
+              js_kind: { name: "string" }
             desc:
-              kind: { name: "string" }
+              js_kind: { name: "string" }
             ipv4:
-              kind: { name: "ipv4_cidr" }
+              js_kind: { name: "ipv4_cidr" }
             ipv6:
-              kind: { name: "ipv6_cidr" }
+              js_kind: { name: "ipv6_cidr" }
           required: [ "if" ]
 
 Motivation

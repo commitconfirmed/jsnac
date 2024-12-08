@@ -1,6 +1,6 @@
-from .core.infer import SchemaInferer
+from .core.build import SchemaBuilder
 
-__version__ = "0.1.0"
+__version__ = "0.2.1"
 __all__ = [
-    "SchemaInferer",
+    "SchemaBuilder",
 ]

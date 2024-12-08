@@ -47,7 +47,7 @@ interfaces:
     ipv4: "10.1.0.20/24"
 ```
 
-You can simply write out how you would like to document & validate this data in YAML using kinds, and this program will write out a JSON schema you can use. 
+You can simply write out how you would like to document & validate this data in a YAML file, and this program will generate a JSON schema you can use. 
 
 ```yaml
 header:
@@ -59,33 +59,33 @@ schema:
     type: "object"
     properties:
       hostname:
-        kind: { name: "string" }
+        js_kind: { name: "string" }
       model:
-        kind: { name: "string" }
+        js_kind: { name: "string" }
       device_type:
-        kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
+        js_kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
   system:
     type: "object"
     properties:
       domain_name:
-        kind: { name: "string" }
+        js_kind: { name: "string" }
       ntp_servers:
         type: "array"
         items:
-          kind: { name: "ipv4" } 
+          js_kind: { name: "ipv4" } 
   interfaces:
     type: "array"
     items:
       type: "object"
       properties:
         if:
-          kind: { name: "string" }
+          js_kind: { name: "string" }
         desc:
-          kind: { name: "string" }
+          js_kind: { name: "string" }
         ipv4:
-          kind: { name: "ipv4_cidr" }
+          js_kind: { name: "ipv4_cidr" }
         ipv6:
-          kind: { name: "ipv6_cidr" }
+          js_kind: { name: "ipv6_cidr" }
 ```
 
 ```bash
@@ -112,7 +112,7 @@ Which language server you use is specific to your environment and editor that yo
 
 ## Detailed Example
 
-We also have full support for writing your own titles, descriptions, kinds (sub-schemas), objects that are required, etc. A more fleshed out example of the same schema is below:
+We also have full support for writing your own titles, descriptions, js_kinds (sub-schemas), objects that are required, etc. A more fleshed out example of the same schema is below:
 
 ```yaml
 header:
@@ -124,7 +124,7 @@ header:
     - system
     - interfaces
 
-kinds:
+js_kinds:
   hostname:
     title: "Hostname"
     description: "Hostname of the device"
@@ -142,15 +142,15 @@ schema:
     type: "object"
     properties:
       hostname:
-        kind: { name: "hostname" }
+        js_kind: { name: "hostname" }
       model:
-        kind: { name: "string" }
+        js_kind: { name: "string" }
       device_type:
         title: "Device Type"
         description: |
           Device Type options are:
           router, switch, firewall, load-balancer
-        kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
+        js_kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
     required: [ "hostname", "model", "device_type" ]
   system:
     title: "System"
@@ -161,13 +161,13 @@ schema:
     type: "object"
     properties:
       domain_name:
-        kind: { name: "string" }
+        js_kind: { name: "string" }
       ntp_servers:
         title: "NTP Servers"
         description: "List of NTP servers"
         type: "array"
         items:
-          kind: { name: "ipv4" } 
+          js_kind: { name: "ipv4" } 
     required: [ "domain_name", "ntp_servers" ]
   interfaces:
     title: "Device Interfaces"
@@ -182,17 +182,17 @@ schema:
       type: "object"
       properties:
         if:
-          kind: { name: "string" }
+          js_kind: { name: "string" }
         desc:
-          kind: { name: "string" }
+          js_kind: { name: "string" }
         ipv4:
-          kind: { name: "ipv4_cidr" }
+          js_kind: { name: "ipv4_cidr" }
         ipv6:
-          kind: { name: "ipv6_cidr" }
+          js_kind: { name: "ipv6_cidr" }
       required: [ "if" ]
 ```
 
-A full list of kinds are available in the [documentation](https://jsnac.readthedocs.io/en/latest/)
+A full list of js_kinds are available in the [documentation](https://jsnac.readthedocs.io/en/latest/)
 
 ## Usage
 
@@ -215,14 +215,15 @@ jsnac -f data/example-jsnac.yml -v
 ### Library
 ```python
 """
-This example demonstrates how to use the jsnac library to build a JSON schema from a YAML file in a Python script.
-Example yml file is available here: <https://www.github.com/commitconfirmed/jsnac/blob/main/data/example-jsnac.yml>
+This example demonstrates how to use the jsnac library to build a JSON schema 
+from a YAML file in a Python script. An example YAML file is available below:
+<https://www.github.com/commitconfirmed/jsnac/blob/main/data/example-jsnac.yml>
 """
-from jsnac.core.infer import SchemaInferer
+from jsnac.core.build import SchemaBuilder
 
 def main():
     # Create a SchemaInferer object
-    jsnac = SchemaInferer()
+    jsnac = SchemaBuilder()
 
     # Load the YAML data however you like into the SchemaInferer object
     with open('data/example-jsnac.yml', 'r') as file:

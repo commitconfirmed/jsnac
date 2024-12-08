@@ -14,37 +14,88 @@
             "type": "string",
             "pattern": "^(([a-fA-F0-9]{1,4}|):){1,7}([a-fA-F0-9]{1,4}|:)$",
             "title": "IPv6 Address",
-            "description": "Short IPv6 address (String) \n Accepts both full and short form addresses, link-local addresses, and IPv4-mapped addresses"
+            "description": "Short IPv6 address (String) \nAccepts both full and short form addresses, link-local addresses, and IPv4-mapped addresses"
         },
         "ipv4_cidr": {
             "type": "string",
             "pattern": "^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])/(1[0-9]|[0-9]|2[0-9]|3[0-2])$",
             "title": "IPv4 CIDR",
-            "description": "IPv4 CIDR (String) \n Format: xxx.xxx.xxx.xxx/xx"
+            "description": "IPv4 CIDR (String) \nFormat: xxx.xxx.xxx.xxx/xx"
         },
         "ipv6_cidr": {
             "type": "string",
-            "pattern": "(([a-fA-F0-9]{1,4}|):){1,7}([a-fA-F0-9]{1,4}|:)/(32|36|40|44|48|52|56|60|64|128)$",
-            "title": "IPv6 CIDR",
-            "description": "Full IPv6 CIDR (String) \n Format: xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/xxx"
+            "pattern": "^(([a-fA-F0-9]{1,4}|):){1,7}([a-fA-F0-9]{1,4}|:)/(32|36|40|44|48|52|56|60|64|128)$",
+            "description": "Full IPv6 CIDR (String) \nFormat: xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/xxx"
         },
         "ipv4_prefix": {
             "type": "string",
-            "title": "IPv4 Prefix",
             "pattern": "^/(1[0-9]|[0-9]|2[0-9]|3[0-2])$",
-            "description": "IPv4 Prefix (String) \n Format: /xx between 0 and 32"
+            "description": "IPv4 Prefix (String) \nFormat: /xx between 0 and 32"
         },
         "ipv6_prefix": {
             "type": "string",
-            "title": "IPv6 Prefix",
             "pattern": "^/(32|36|40|44|48|52|56|60|64|128)$",
-            "description": "IPv6 prefix (String) \n Format: /xx between 32 and 64 in increments of 4. also /128"
+            "description": "IPv6 prefix (String) \nFormat: /xx between 32 and 64 in increments of 4. also /128"
         },
         "domain": {
             "type": "string",
             "pattern": "^([a-zA-Z0-9-]{1,63}\\.)+[a-zA-Z]{2,63}$",
-            "title": "Domain Name",
-            "description": "Domain name (String) \n Format: example.com"
+            "description": "Domain name (String) \nFormat: example.com"
+        },
+        "email": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "description": "Email address (String) \nFormat: user@domain.com"
+        },
+        "http_url": {
+            "type": "string",
+            "pattern": "^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*\\??([^#\\s]*)?(#.*)?$",
+            "description": "HTTP(s) URL (String) \nFormat: http://example.com"
+        },
+        "uint16": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535,
+            "description": "16-bit Unsigned Integer \nRange: 0 to 65535"
+        },
+        "uint32": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "description": "32-bit Unsigned Integer \nRange: 0 to 4294967295"
+        },
+        "uint64": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615,
+            "description": "64-bit Unsigned Integer \nRange: 0 to 18446744073709551615"
+        },
+        "mtu": {
+            "type": "integer",
+            "minimum": 68,
+            "maximum": 9192,
+            "description": "Maximum Transmission Unit (MTU) \nRange: 68 to 9192"
+        },
+        "mac": {
+            "type": "string",
+            "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+            "description": "MAC Address (String) \nFormat: xx:xx:xx:xx:xx:xx"
+        },
+        "mac_dot": {
+            "type": "string",
+            "pattern": "^([0-9A-Fa-f]{4}[.]){2}([0-9A-Fa-f]{4})$",
+            "description": "MAC Address with dots (String) \nFormat: xxxx.xxxx.xxxx"
+        },
+        "vlan": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4094,
+            "description": "VLAN ID (Integer) \nRange: 1 to 4094"
+        },
+        "docker_image": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$",
+            "description": "Docker Image Name (String) \nFormat: alpine:latest"
         },
         "hostname": {
             "title": "Hostname",
@@ -57,21 +108,22 @@
     "additionalProperties": false,
     "properties": {
         "chassis": {
+            "type": "object",
+            "additionalProperties": false,
             "title": "Chassis",
             "description": "Object containing Chassis information. Has the below properties: \nhostname [required]: hostname\nmodel [required]: string\ndevice_type [required]: choice (router, switch, firewall, load-balancer)\n",
-            "type": "object",
             "properties": {
                 "hostname": {
+                    "title": "hostname",
                     "$ref": "#/$defs/hostname"
                 },
                 "model": {
-                    "type": "string",
                     "title": "model",
+                    "type": "string",
                     "description": "String"
                 },
                 "device_type": {
-                    "title": "Device Type",
-                    "description": "Device Type options are:\nrouter, switch, firewall, load-balancer\n",
+                    "title": "device_type",
                     "enum": [
                         "router",
                         "switch",
@@ -87,20 +139,22 @@
             ]
         },
         "system": {
+            "type": "object",
+            "additionalProperties": false,
             "title": "System",
             "description": "Object containing System information. Has the below properties:\ndomain_name [required]: string\nntp_servers [required]: list of ipv4 addresses\n",
-            "type": "object",
             "properties": {
                 "domain_name": {
-                    "type": "string",
                     "title": "domain_name",
+                    "type": "string",
                     "description": "String"
                 },
                 "ntp_servers": {
+                    "type": "array",
                     "title": "NTP Servers",
                     "description": "List of NTP servers",
-                    "type": "array",
                     "items": {
+                        "title": "items",
                         "$ref": "#/$defs/ipv4"
                     }
                 }
@@ -111,26 +165,29 @@
             ]
         },
         "interfaces": {
+            "type": "array",
             "title": "Device Interfaces",
             "description": "List of device interfaces. Each interface has the below properties:\nif [required]: string\ndesc: string\nipv4: ipv4_cidr\nipv6: ipv6_cidr\n",
-            "type": "array",
             "items": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                     "if": {
-                        "type": "string",
                         "title": "if",
+                        "type": "string",
                         "description": "String"
                     },
                     "desc": {
-                        "type": "string",
                         "title": "desc",
+                        "type": "string",
                         "description": "String"
                     },
                     "ipv4": {
+                        "title": "ipv4",
                         "$ref": "#/$defs/ipv4_cidr"
                     },
                     "ipv6": {
+                        "title": "ipv6",
                         "$ref": "#/$defs/ipv6_cidr"
                     }
                 },
