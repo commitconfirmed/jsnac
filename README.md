@@ -6,6 +6,7 @@
 JSON Schema (for) Network Automation Creator 
 
 - [Overview](#overview)
+- [Installation](#installation)
 - [Brief Example](#brief-example)
 - [YAML Validation](#yaml-validation)
 - [Detailed Example](#detailed-example)
@@ -22,6 +23,10 @@ Using a JSON schema for validating & documenting your YAML is a good practice in
 This project aims to simplify this whole process by helping you build a JSON schema using YAML syntax that has network and infrastructure templates (or sub-schemas) in mind.
 
 Now you can hopefully catch those rare mistakes before you run that Playbook, create that configuration with a Jinja2 template or run a REST query to that Source of Truth or Telemetry solution :)
+
+## Installation
+
+JSNAC can be installed using pip: ``pip install jsnac`` and can be used as either a command line tool or as a Python library in your own python project (See [Usage](#usage)).
 
 ## Brief Example
 
@@ -56,7 +61,6 @@ header:
 schema:
   chassis:
     title: "Chassis"
-    type: "object"
     properties:
       hostname:
         js_kind: { name: "string" }
@@ -65,18 +69,14 @@ schema:
       device_type:
         js_kind: { name: "choice", choices: [ "router", "switch", "firewall", "load-balancer" ] }
   system:
-    type: "object"
     properties:
       domain_name:
         js_kind: { name: "string" }
       ntp_servers:
-        type: "array"
         items:
           js_kind: { name: "ipv4" } 
   interfaces:
-    type: "array"
     items:
-      type: "object"
       properties:
         if:
           js_kind: { name: "string" }
@@ -139,7 +139,6 @@ schema:
       hostname [required]: hostname
       model [required]: string
       device_type [required]: choice (router, switch, firewall, load-balancer)
-    type: "object"
     properties:
       hostname:
         js_kind: { name: "hostname" }
@@ -158,14 +157,12 @@ schema:
       Object containing System information. Has the below properties:
       domain_name [required]: string
       ntp_servers [required]: list of ipv4 addresses
-    type: "object"
     properties:
       domain_name:
         js_kind: { name: "string" }
       ntp_servers:
         title: "NTP Servers"
         description: "List of NTP servers"
-        type: "array"
         items:
           js_kind: { name: "ipv4" } 
     required: [ "domain_name", "ntp_servers" ]
@@ -177,9 +174,7 @@ schema:
       desc: string
       ipv4: ipv4_cidr
       ipv6: ipv6_cidr
-    type: "array"
     items:
-      type: "object"
       properties:
         if:
           js_kind: { name: "string" }
