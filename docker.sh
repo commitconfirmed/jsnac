@@ -31,7 +31,7 @@ while getopts 'bcr' flag; do
       sudo docker rm $(sudo docker ps -qaf name=jsnac)
       sudo docker build -t jsnac .
       sudo docker image rm $(sudo docker image list -qf dangling=true)
-      sudo docker run -d --name jsnac jsnac
+      sudo docker run -it --name jsnac jsnac
       exit 0
       ;;
     *) error "Unexpected option ${flag}" ;;

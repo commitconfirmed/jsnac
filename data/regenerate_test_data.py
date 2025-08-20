@@ -32,7 +32,7 @@ def write_json(file: str) -> None:  # noqa: D103
     input_file = Path(file)
     output_file = input_file.with_suffix(".json")
     try:
-        with input_file.open() as f:
+        with input_file.open(encoding="utf-8") as f:
             example_yaml_data = yaml.safe_load(f.read())
             f.close()
     except yaml.YAMLError as e:

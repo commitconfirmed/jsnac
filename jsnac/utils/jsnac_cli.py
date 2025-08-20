@@ -128,12 +128,12 @@ def main(args: str | None = None) -> None:
         jsnac = SchemaBuilder()
         if flags.json:
             log.debug("Using JSON file: %s", flags.file)
-            with input_file.open() as f:
+            with input_file.open(encoding="utf-8") as f:
                 jsnac.add_json(f.read())
                 f.close()
         else:
             log.debug("Using YAML file: %s", flags.file)
-            with input_file.open() as f:
+            with input_file.open(encoding="utf-8") as f:
                 jsnac.add_yaml(f.read())
                 f.close()
         # Build the schema and record the time taken
@@ -144,7 +144,7 @@ def main(args: str | None = None) -> None:
         log.info("Schema built in %.4f seconds", duration)
         # Write the schema to a file
         schema_file = Path(flags.output)
-        with schema_file.open(mode="w") as f:
+        with schema_file.open(mode="w", encoding="utf-8") as f:
             f.write(schema)
         log.info("Schema written to: %s", schema_file)
     log.info("JSNAC CLI complete")

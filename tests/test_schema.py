@@ -8,10 +8,10 @@ import pytest
 # Load our example JSON data and schema
 test_json_file = Path("data/example.json")
 test_schema_file = Path("data/example.schema.json")
-with test_json_file.open() as f:
+with test_json_file.open(encoding="utf-8") as f:
     test_json_data = json.loads(f.read())
     f.close()
-with test_schema_file.open() as f:
+with test_schema_file.open(encoding="utf-8") as f:
     test_json_schema = json.loads(f.read())
     f.close()
 
